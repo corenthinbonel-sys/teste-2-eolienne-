@@ -3,405 +3,746 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Éolienne - Supervision</title>
 
 <style>
-*{box-sizing:border-box}
+
+*{
+    box-sizing:border-box;
+}
 
 body{
     margin:0;
-    padding:14px;
-    max-width:950px;
-    margin:auto;
-    background:#07111f;
+    background:#020b14;
     color:#eef6ff;
-    font-family:Arial,sans-serif;
+    font-family:Arial,Helvetica,sans-serif;
+    min-height:100vh;
 }
 
 body.critical{
-    background:#430707;
-    animation:flash .65s infinite;
+    animation:criticalFlash .65s infinite;
 }
 
-@keyframes flash{
-    50%{background:#120505}
+@keyframes criticalFlash{
+    0%,100%{background:#020b14;}
+    50%{background:#300606;}
 }
 
-h1{margin:0}
-
-.sub{
-    color:#8da0b4;
-    font-size:12px;
+.app{
+    width:100%;
+    max-width:1150px;
+    margin:auto;
+    padding:20px;
 }
 
-.card{
-    background:#0d1a2a;
-    border:1px solid #20334b;
-    border-radius:16px;
-    padding:14px;
-    margin:10px 0;
+/* ================= HEADER ================= */
+
+.header{
+    display:grid;
+    grid-template-columns:350px 1fr 80px;
+    align-items:center;
+    gap:20px;
+    margin-bottom:28px;
 }
 
 .emergency{
-    width:100%;
-    height:90px;
+    height:125px;
     border:2px solid #ff4444;
     border-radius:18px;
-    background:#8d1111;
+    background:linear-gradient(135deg,#8d1111,#4b0808);
     color:white;
-    font-size:20px;
-    font-weight:bold;
     cursor:pointer;
+    box-shadow:0 0 25px rgba(255,0,0,.15);
 }
 
-.emergency small{
-    display:block;
-    font-size:11px;
+.emergency-icon{
+    font-size:38px;
+}
+
+.emergency-title{
+    font-size:22px;
+    font-weight:bold;
     margin-top:5px;
 }
 
-.status{
+.emergency-sub{
+    font-size:12px;
+    margin-top:7px;
+    color:#ffdede;
+}
+
+.title{
     text-align:center;
-    padding:12px;
-    border-radius:13px;
-    background:#073b29;
-    color:#7df3a5;
+}
+
+.title h1{
+    margin:0;
+    font-size:32px;
+    letter-spacing:1px;
+}
+
+.online{
+    color:#29e75d;
+    font-size:18px;
     font-weight:bold;
-    margin-top:10px;
+    margin-top:8px;
 }
 
-.eco{
-    display:none;
-    background:#176b3b;
-    border:1px solid #42e36e;
-    border-radius:13px;
-    padding:11px;
-    text-align:center;
-    font-weight:bold;
-    margin-top:10px;
+.connected{
+    color:#28aef5;
+    font-size:16px;
+    margin-top:7px;
 }
 
-.eco.on{
-    display:block;
+.settings{
+    height:65px;
+    width:65px;
+    border:1px solid #34495e;
+    border-radius:15px;
+    background:#07121e;
+    color:white;
+    font-size:30px;
 }
 
-.alert{
-    display:none;
-    background:#a91515;
-    border-radius:13px;
-    padding:12px;
-    text-align:center;
-    font-weight:bold;
-    margin-top:10px;
-}
-
-.alert.on{
-    display:block;
-    animation:flash .65s infinite;
-}
+/* ================= CARTES ================= */
 
 .grid{
     display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
 }
 
-.metric{
-    min-height:110px;
+.card{
+    background:linear-gradient(
+        145deg,
+        #071824,
+        #06131f
+    );
+
+    border:1px solid #203548;
+    border-radius:15px;
+    padding:20px;
+    min-height:165px;
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
 }
 
-.label{
-    font-size:12px;
-    color:#8da0b4;
-}
-
-.value{
-    font-size:26px;
-    font-weight:900;
-    margin-top:6px;
-}
-
-.dot{
-    width:13px;
-    height:13px;
-    border-radius:50%;
-    display:inline-block;
-}
-
-.green{
-    background:#39df69;
-    box-shadow:0 0 8px #39df69;
-}
-
-.yellow{
-    background:#ffd43b;
-    box-shadow:0 0 8px #ffd43b;
-}
-
-.red{
-    background:#ff4242;
-    box-shadow:0 0 8px #ff4242;
-}
-
-.head{
+.card-title{
     display:flex;
     justify-content:space-between;
     align-items:center;
+    color:#26aef4;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.card-title.green{
+    color:#42dc52;
+}
+
+.card-title.orange{
+    color:#ff9418;
+}
+
+.card-title.red{
+    color:#ff5151;
+}
+
+.card-title.yellow{
+    color:#ffd629;
+}
+
+.card-icon{
+    font-size:24px;
+}
+
+.value{
+    margin-top:22px;
+    font-size:34px;
+    font-weight:bold;
+}
+
+.unit{
+    font-size:18px;
+    font-weight:normal;
+}
+
+.limit{
+    margin-top:10px;
+    color:#aebbc8;
+    font-size:14px;
 }
 
 .progress{
     height:9px;
-    background:#1b2a3e;
-    border-radius:20px;
-    margin-top:8px;
+    background:#172735;
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:13px;
 }
 
-.fill{
+.progress-fill{
     height:100%;
     width:50%;
-    background:#39df69;
-    border-radius:20px;
+    border-radius:10px;
+    background:#2196e8;
 }
 
-.row{
+.progress-green{
+    background:#35d85d;
+}
+
+.progress-orange{
+    background:#ff9418;
+}
+
+.progress-red{
+    background:#ff4545;
+}
+
+/* ================= DOTS ================= */
+
+.dot{
+    width:12px;
+    height:12px;
+    border-radius:50%;
+    display:inline-block;
+}
+
+.dot.green{
+    background:#35df63;
+    box-shadow:0 0 10px #35df63;
+}
+
+.dot.yellow{
+    background:#ffd42d;
+    box-shadow:0 0 10px #ffd42d;
+}
+
+.dot.red{
+    background:#ff3e3e;
+    box-shadow:0 0 10px #ff3e3e;
+}
+
+/* ================= PUISSANCE ================= */
+
+.power-value{
+    font-size:34px;
+    font-weight:bold;
+    margin-top:20px;
+}
+
+.power-extra{
+    margin-top:14px;
+    color:#aebbc8;
+    line-height:1.8;
+}
+
+/* ================= BATTERIES ================= */
+
+.battery-card{
+    grid-column:span 2;
+}
+
+.battery{
+    margin-top:16px;
+}
+
+.battery-head{
     display:flex;
     justify-content:space-between;
-    padding:10px 0;
-    border-bottom:1px solid #20334b;
+    font-size:14px;
 }
 
-.row:last-child{
-    border:0;
-}
-
-button{
-    width:100%;
-    border:0;
-    border-radius:13px;
-    padding:13px;
-    margin-top:8px;
-    color:white;
-    background:#26384f;
+.battery-name{
     font-weight:bold;
-    cursor:pointer;
 }
 
-button:active{
-    transform:scale(.98);
+.battery-status{
+    color:#39dc63;
 }
 
-.danger{
-    background:#861919;
+.battery-percent{
+    font-size:13px;
+    color:#aebbc8;
+    margin-top:5px;
 }
 
-.warning{
-    background:#815b11;
+.charge-bar{
+    height:12px;
+    background:#182837;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:9px;
 }
 
-.greenbtn{
+.charge-fill{
+    height:100%;
+    background:#35d85d;
+    border-radius:20px;
+    transition:.4s;
+}
+
+.priority{
+    margin-top:14px;
+    padding:10px;
+    border-radius:9px;
+    background:#0c3925;
+    color:#55ed78;
+    text-align:center;
+    font-weight:bold;
+    font-size:13px;
+}
+
+/* ================= ECO ================= */
+
+.eco-card{
+    position:relative;
+}
+
+.eco-state{
+    margin-top:25px;
+    display:inline-block;
+    padding:10px 16px;
+    border-radius:10px;
     background:#176b3b;
+    color:#68f58a;
+    font-weight:bold;
 }
 
-.controls,
-.tests{
+.eco-description{
+    margin-top:15px;
+    color:#aebbc8;
+}
+
+/* ================= COMMANDES ================= */
+
+.command-row{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:8px;
+    gap:14px;
+    margin-top:14px;
 }
 
-.controls button,
-.tests button{
-    margin:0;
-}
-
-.section{
-    font-size:17px;
+.command{
+    padding:22px;
+    border-radius:15px;
+    background:#071824;
+    border:1px solid #203548;
+    cursor:pointer;
+    color:white;
     font-weight:bold;
-    margin-top:18px;
+    font-size:16px;
 }
 
-.log{
-    max-height:260px;
-    overflow:auto;
-    font-size:12px;
+.command:hover{
+    background:#0b2031;
 }
 
-.entry{
-    padding:8px 3px;
-    border-bottom:1px solid #20334b;
+.manual{
+    color:#b56cff;
 }
 
-.note{
-    font-size:11px;
-    color:#8da0b4;
-    line-height:1.4;
-    margin-top:8px;
+.reset{
+    color:#31b5ff;
 }
 
-canvas{
-    width:100%;
-    height:150px;
-    background:#091522;
-    border-radius:12px;
+/* ================= VENT ================= */
+
+.wind-card{
+    margin-top:14px;
 }
 
-.wind{
+.wind-grid{
     display:grid;
-    grid-template-columns:1fr 1.2fr 1fr;
+    grid-template-columns:1fr 1.4fr 1fr;
+    gap:20px;
     align-items:center;
-    gap:8px;
 }
 
-.center{
-    text-align:center;
-}
-
-.big{
-    font-size:27px;
+.wind-title{
+    color:#29aef5;
+    font-size:22px;
     font-weight:bold;
+}
+
+.wind-speed{
+    margin-top:35px;
+    font-size:32px;
+    font-weight:bold;
+}
+
+.wind-ms{
+    margin-top:10px;
+    color:#aebbc8;
 }
 
 .compass{
-    position:relative;
-    width:min(100%,280px);
-    aspect-ratio:1;
-    border:2px solid #2c5576;
-    border-radius:50%;
+    width:280px;
+    height:280px;
     margin:auto;
-    background:#091a2a;
-}
-
-.compass:before,
-.compass:after{
-    content:"";
-    position:absolute;
-    background:#2c5576;
+    border:2px solid #27455b;
+    border-radius:50%;
+    position:relative;
+    background:#061522;
 }
 
 .compass:before{
-    width:1px;
+    content:"";
+    position:absolute;
     top:8%;
     bottom:8%;
+    width:1px;
     left:50%;
+    background:#315066;
 }
 
 .compass:after{
-    height:1px;
-    left:8%;
-    right:8%;
-    top:50%;
-}
-
-.arrow{
-    position:absolute;
-    left:50%;
-    top:10%;
-    height:40%;
-    width:0;
-    transform-origin:bottom;
-    transform:rotate(var(--wind,215deg));
-}
-
-.arrow:after{
     content:"";
     position:absolute;
-    border-left:8px solid transparent;
-    border-right:8px solid transparent;
-    border-bottom:24px solid #22bfff;
-    transform:translateX(-50%);
-}
-
-.tcenter{
-    position:absolute;
-    left:50%;
+    left:8%;
+    right:8%;
+    height:1px;
     top:50%;
-    transform:translate(-50%,-50%);
-    background:#07111fdd;
-    border-radius:50%;
-    padding:18px;
-    text-align:center;
-    z-index:2;
+    background:#315066;
 }
 
-.tcenter b{
-    font-size:20px;
-}
-
-.tcenter span{
-    display:block;
-    color:#22bfff;
-    font-size:11px;
-}
-
-.c{
+.direction{
     position:absolute;
     font-weight:bold;
+    font-size:15px;
 }
 
 .n{
-    top:7px;
+    top:10px;
     left:50%;
     transform:translateX(-50%);
 }
 
 .e{
-    right:9px;
+    right:10px;
     top:50%;
     transform:translateY(-50%);
 }
 
 .s{
-    bottom:7px;
+    bottom:10px;
     left:50%;
     transform:translateX(-50%);
 }
 
-.w{
-    left:9px;
+.o{
+    left:10px;
     top:50%;
     transform:translateY(-50%);
 }
 
-@media(max-width:650px){
+.wind-arrow{
+    position:absolute;
+    width:5px;
+    height:105px;
+    left:50%;
+    top:38px;
+    transform-origin:bottom;
+    background:#1daaf4;
+    transform:rotate(215deg);
+    border-radius:5px;
+}
 
-    .wind{
+.wind-arrow:after{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:-18px;
+    transform:translateX(-50%);
+    border-left:10px solid transparent;
+    border-right:10px solid transparent;
+    border-bottom:25px solid #1daaf4;
+}
+
+.wind-center{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    text-align:center;
+}
+
+.wind-center-title{
+    color:#26aef4;
+    font-size:16px;
+}
+
+.wind-center-value{
+    font-size:28px;
+    font-weight:bold;
+    margin-top:6px;
+}
+
+.wind-center-name{
+    color:#26aef4;
+    margin-top:5px;
+}
+
+.turbine{
+    text-align:center;
+}
+
+.turbine-title{
+    color:#4adb55;
+    font-weight:bold;
+}
+
+.turbine-angle{
+    font-size:34px;
+    font-weight:bold;
+    margin-top:18px;
+}
+
+.orientation{
+    color:#4adb55;
+    margin-top:7px;
+}
+
+/* ================= SECURITE ================= */
+
+.security{
+    margin-top:14px;
+}
+
+.security-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.security-item{
+    padding:13px;
+    background:#061522;
+    border:1px solid #1b3042;
+    border-radius:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.security-name{
+    color:#b6c2ce;
+    font-size:13px;
+}
+
+/* ================= GRAPHIQUE ================= */
+
+.chart-card{
+    margin-top:14px;
+}
+
+canvas{
+    width:100%;
+    height:190px;
+    background:#04111b;
+    border-radius:12px;
+}
+
+/* ================= JOURNAL ================= */
+
+.log{
+    max-height:220px;
+    overflow:auto;
+}
+
+.entry{
+    padding:8px;
+    border-bottom:1px solid #1b3042;
+    color:#b9c5d0;
+    font-size:12px;
+}
+
+/* ================= TESTS ================= */
+
+.tests{
+    margin-top:14px;
+}
+
+.tests-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+.test{
+    padding:13px;
+    border-radius:10px;
+    border:1px solid #31495d;
+    background:#0a1b2a;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.test.danger{
+    border-color:#8f2e2e;
+}
+
+.test.warning{
+    border-color:#80681e;
+}
+
+.test:hover{
+    background:#102a3c;
+}
+
+.note{
+    color:#8fa1b2;
+    font-size:12px;
+    margin-bottom:10px;
+}
+
+/* ================= NAVIGATION ================= */
+
+.bottom-nav{
+    margin-top:30px;
+    padding:15px 10px;
+    border-top:1px solid #1d3446;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    text-align:center;
+}
+
+.nav-item{
+    color:#8997a5;
+    font-weight:bold;
+    font-size:13px;
+}
+
+.nav-item.active{
+    color:#21aaf3;
+}
+
+.nav-icon{
+    font-size:26px;
+    display:block;
+    margin-bottom:5px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:900px){
+
+    .header{
         grid-template-columns:1fr;
+    }
+
+    .grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .battery-card{
+        grid-column:span 2;
+    }
+
+    .wind-grid{
+        grid-template-columns:1fr;
+    }
+
+    .tests-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .security-grid{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:600px){
+
+    .app{
+        padding:10px;
     }
 
     .grid{
         grid-template-columns:1fr 1fr;
     }
 
-    .tests{
-        grid-template-columns:1fr 1fr;
+    .card{
+        padding:14px;
+        min-height:145px;
+    }
+
+    .value{
+        font-size:25px;
+    }
+
+    .header{
+        gap:10px;
+    }
+
+    .emergency{
+        height:100px;
+    }
+
+    .security-grid{
+        grid-template-columns:1fr;
+    }
+
+    .bottom-nav{
+        grid-template-columns:repeat(5,1fr);
+    }
+
+    .nav-icon{
+        font-size:21px;
+    }
+
+    .nav-item{
+        font-size:10px;
     }
 }
+
 </style>
 </head>
 
 <body>
 
-<h1>⚡ ÉOLIENNE</h1>
+<div class="app">
 
-<div class="sub">
-Supervision & commande — simulation automatique
-</div>
+<!-- ================= HEADER ================= -->
 
-<br>
+<div class="header">
 
 <button id="emergency" class="emergency">
-🛑 FREIN D'URGENCE
-<small>Déclenchement manuel</small>
-</button>
 
-<div id="alert" class="alert"></div>
+<div class="emergency-icon">🛑</div>
 
-<div id="eco" class="eco">
-🌱 MODE ECO ACTIVÉ — VENT FAIBLE
+<div class="emergency-title">
+FREIN D'URGENCE
 </div>
 
-<div id="status" class="status">
-🟢 SIMULATION AUTOMATIQUE
+<div class="emergency-sub">
+APPUYER POUR ARRÊTER
+</div>
+
+</button>
+
+<div class="title">
+
+<h1>
+🟢 ÉOLIENNE
+</h1>
+
+<div id="systemStatus" class="online">
+Système opérationnel
+</div>
+
+<div id="connectionHeader" class="connected">
+Connecté à l'ESP32
+</div>
+
+</div>
+
+<button class="settings">
+⚙️
+</button>
+
 </div>
 
 
@@ -409,161 +750,335 @@ Supervision & commande — simulation automatique
 
 <div class="grid">
 
-<div class="card metric">
+<!-- ROTOR -->
 
-<div class="head">
-<span class="label">🔄 VITESSE ROTOR</span>
-<i id="rpmDot" class="dot green"></i>
+<div class="card">
+
+<div class="card-title">
+
+<span>🔄 VITESSE ROTOR</span>
+
+<span id="rpmDot" class="dot green"></span>
+
 </div>
 
 <div class="value">
 <span id="rpm">0</span>
+<span class="unit">tr/min</span>
 </div>
 
-<span class="label">tr/min</span>
-
-</div>
-
-
-<div class="card metric">
-
-<div class="head">
-<span class="label">🌡️ GÉNÉRATEUR</span>
-<i id="tempDot" class="dot green"></i>
-</div>
-
-<div class="value">
-<span id="temp">32.0</span> °C
-</div>
-
-</div>
-
-
-<div class="card metric">
-
-<div class="head">
-<span class="label">🛞 ROULEMENT</span>
-<i id="bearingDot" class="dot green"></i>
-</div>
-
-<div class="value">
-<span id="bearing">29.0</span> °C
-</div>
-
-</div>
-
-
-<div class="card metric">
-
-<div class="head">
-<span class="label">💧 HUMIDITÉ</span>
-<i id="humidityDot" class="dot green"></i>
-</div>
-
-<div class="value">
-<span id="humidity">55</span> %
-</div>
-
-</div>
-
-
-<div class="card metric">
-
-<div class="head">
-<span class="label">⚡ TENSION</span>
-<i id="voltageDot" class="dot green"></i>
-</div>
-
-<div class="value">
-<span id="voltage">12.0</span> V
-</div>
-
-</div>
-
-
-<div class="card metric">
-
-<div class="head">
-<span class="label">🔌 COURANT</span>
-<i id="currentDot" class="dot green"></i>
-</div>
-
-<div class="value">
-<span id="current">0.0</span> A
-</div>
-
-</div>
-
-
-<div class="card metric">
-
-<div class="head">
-<span class="label">⚡ PUISSANCE</span>
-<i id="powerDot" class="dot green"></i>
-</div>
-
-<div class="value">
-<span id="power">0</span> W
-</div>
-
-</div>
-
-
-<div class="card metric">
-
-<div class="head">
-<span class="label">🔋 BATTERIE SECOURS</span>
-<i id="batteryDot" class="dot green"></i>
-</div>
-
-<div class="value">
-<span id="battery">12.80</span> V
+<div class="limit">
+Limite : 650 tr/min
 </div>
 
 <div class="progress">
-<div id="batteryFill" class="fill"></div>
+<div id="rpmBar" class="progress-fill"></div>
 </div>
+
+</div>
+
+
+<!-- TEMPERATURE GENERATEUR -->
+
+<div class="card">
+
+<div class="card-title red">
+
+<span>🌡️ TEMPÉRATURE GÉNÉRATEUR</span>
+
+<span id="tempDot" class="dot green"></span>
+
+</div>
+
+<div class="value">
+<span id="temp">32.0</span>
+<span class="unit">°C</span>
+</div>
+
+<div class="limit">
+Limite : 100 °C
+</div>
+
+<div class="progress">
+<div id="tempBar" class="progress-fill progress-red"></div>
+</div>
+
+</div>
+
+
+<!-- ROULEMENT -->
+
+<div class="card">
+
+<div class="card-title orange">
+
+<span>🛞 TEMPÉRATURE ROULEMENT</span>
+
+<span id="bearingDot" class="dot green"></span>
+
+</div>
+
+<div class="value">
+<span id="bearing">29.0</span>
+<span class="unit">°C</span>
+</div>
+
+<div class="limit">
+Limite : 85 °C
+</div>
+
+<div class="progress">
+<div id="bearingBar" class="progress-fill progress-orange"></div>
+</div>
+
+</div>
+
+
+<!-- LUMINOSITE -->
+
+<div class="card">
+
+<div class="card-title yellow">
+
+<span>☀️ LUMINOSITÉ</span>
+
+<span id="lightDot" class="dot green"></span>
+
+</div>
+
+<div class="value">
+<span id="light">425</span>
+<span class="unit">lux</span>
+</div>
+
+<div class="limit">
+Niveau : Bon
+</div>
+
+</div>
+
+
+<!-- PUISSANCE -->
+
+<div class="card">
+
+<div class="card-title green">
+
+<span>⚡ PUISSANCE ÉLECTRIQUE</span>
+
+<span id="powerDot" class="dot green"></span>
+
+</div>
+
+<div class="power-value">
+<span id="power">0</span>
+<span class="unit">W</span>
+</div>
+
+<div class="power-extra">
+
+Tension :
+<span id="voltage">12.0</span> V
 
 <br>
 
-<div class="label">
-🔋 BATTERIE PRINCIPALE
+Courant :
+<span id="current">0.0</span> A
+
+</div>
+
+</div>
+
+
+<!-- ENERGIE -->
+
+<div class="card">
+
+<div class="card-title green">
+
+<span>📊 ÉNERGIE PRODUITE</span>
+
+</div>
+
+<div class="power-value">
+
+<span id="energy">0.0000</span>
+<span class="unit">kWh</span>
+
+</div>
+
+<button id="zero" class="command">
+↻ REMISE À ZÉRO
+</button>
+
+</div>
+
+
+<!-- HUMIDITE -->
+
+<div class="card">
+
+<div class="card-title">
+
+<span>💧 HUMIDITÉ</span>
+
+<span id="humidityDot" class="dot green"></span>
+
 </div>
 
 <div class="value">
-<span id="secondary">12.80</span> V
-</div>
 
-<div class="progress">
-<div id="secondaryFill" class="fill"></div>
-</div>
+<span id="humidity">55</span>
+<span class="unit">%</span>
 
 </div>
+
+<div class="limit">
+Niveau : Normal
+</div>
+
+</div>
+
+
+<!-- ECO -->
+
+<div class="card eco-card">
+
+<div class="card-title green">
+
+<span>🌱 MODE ECO</span>
+
+</div>
+
+<div id="ecoState" class="eco-state">
+INACTIF
+</div>
+
+<div class="eco-description">
+Mode économie d'énergie
+</div>
+
+</div>
+
+
+<!-- ================= BATTERIES ================= -->
+
+<div class="card battery-card">
+
+<div class="card-title green">
+🔋 GESTION DES BATTERIES
+</div>
+
+<!-- SECOURS -->
+
+<div class="battery">
+
+<div class="battery-head">
+
+<span class="battery-name">
+🔋 Batterie secours
+</span>
+
+<span id="backupStatus" class="battery-status">
+CHARGE
+</span>
+
+</div>
+
+<div class="value">
+<span id="battery">12.80</span>
+<span class="unit">V</span>
+</div>
+
+<div class="battery-percent">
+Charge :
+<span id="batteryPercent">50</span> %
+</div>
+
+<div class="charge-bar">
+<div id="batteryFill" class="charge-fill"></div>
+</div>
+
+</div>
+
+
+<!-- PRINCIPALE -->
+
+<div class="battery">
+
+<div class="battery-head">
+
+<span class="battery-name">
+🔋 Batterie principale
+</span>
+
+<span id="mainStatus" class="battery-status">
+EN ATTENTE
+</span>
+
+</div>
+
+<div class="value">
+<span id="secondary">12.80</span>
+<span class="unit">V</span>
+</div>
+
+<div class="battery-percent">
+Charge :
+<span id="secondaryPercent">50</span> %
+</div>
+
+<div class="charge-bar">
+<div id="secondaryFill" class="charge-fill"></div>
+</div>
+
+</div>
+
+<div id="chargePriority" class="priority">
+🔋 PRIORITÉ : BATTERIE SECOURS
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= COMMANDES ================= -->
+
+<div class="command-row">
+
+<button id="manual" class="command manual">
+✋ BOUTON ARRÊT MANUEL
+<br>
+<small>Position : DÉSACTIVÉ</small>
+</button>
+
+<button id="reset" class="command reset">
+🔄 RÉARMEMENT
+<br>
+<small>CONFIRMER POUR RÉARMER</small>
+</button>
 
 </div>
 
 
 <!-- ================= VENT ================= -->
 
-<div class="section">
-🌬️ Vent & orientation
+<div class="card wind-card">
+
+<div class="wind-grid">
+
+<div>
+
+<div class="wind-title">
+🌬️ VENT
 </div>
 
-<div class="card">
-
-<div class="wind">
-
-<div class="center">
-
-<div class="label">
-VITESSE VENT
-</div>
-
-<div class="big">
+<div class="wind-speed">
 <span id="wind">20.0</span> km/h
 </div>
 
-<div class="label">
+<div class="wind-ms">
 <span id="windms">5.6</span> m/s
 </div>
 
@@ -572,38 +1087,48 @@ VITESSE VENT
 
 <div class="compass">
 
-<span class="c n">N</span>
-<span class="c e">E</span>
-<span class="c s">S</span>
-<span class="c w">O</span>
+<div class="direction n">N</div>
+<div class="direction e">E</div>
+<div class="direction s">S</div>
+<div class="direction o">O</div>
 
-<div id="arrow" class="arrow"></div>
+<div id="windArrow" class="wind-arrow"></div>
 
-<div class="tcenter">
+<div class="wind-center">
 
-<b id="windDeg">215°</b>
+<div class="wind-center-title">
+VENT
+</div>
 
-<span id="windName">
+<div class="wind-center-value">
+<span id="windDeg">215</span>°
+</div>
+
+<div id="windName" class="wind-center-name">
 Sud-Ouest
-</span>
-
 </div>
 
 </div>
 
-
-<div class="center">
-
-<div class="label">
-ORIENTATION ÉOLIENNE
 </div>
 
-<div class="big">
+
+<div class="turbine">
+
+<div class="turbine-title">
+DIRECTION DE L'ÉOLIENNE
+</div>
+
+<div class="turbine-angle">
 <span id="turbDeg">125</span>°
 </div>
 
-<div class="label">
+<div id="orientationText" class="orientation">
 🟢 Face au vent
+</div>
+
+<div style="font-size:70px;margin-top:10px;">
+🌀
 </div>
 
 </div>
@@ -615,203 +1140,143 @@ ORIENTATION ÉOLIENNE
 
 <!-- ================= SECURITE ================= -->
 
-<div class="section">
-🛡️ Sécurité
+<div class="card security">
+
+<div class="card-title">
+🛡️ SÉCURITÉ
 </div>
 
-<div class="card">
+<div class="security-grid">
 
-<div class="row">
-<span>Frein</span>
+<div class="security-item">
+<span class="security-name">Frein</span>
 <b id="brakeState">🟢 LIBÉRÉ</b>
 </div>
 
-<div class="row">
-<span>Survitesse</span>
+<div class="security-item">
+<span class="security-name">Survitesse</span>
 <b id="speedState">🟢 OK</b>
 </div>
 
-<div class="row">
-<span>Température générateur</span>
+<div class="security-item">
+<span class="security-name">Température générateur</span>
 <b id="tempState">🟢 OK</b>
 </div>
 
-<div class="row">
-<span>Température roulement</span>
+<div class="security-item">
+<span class="security-name">Température roulement</span>
 <b id="bearingState">🟢 OK</b>
 </div>
 
-<div class="row">
-<span>Orientation</span>
+<div class="security-item">
+<span class="security-name">Orientation</span>
 <b id="orientationState">🟢 FACE AU VENT</b>
 </div>
 
-<div class="row">
-<span>Arrêt manuel</span>
+<div class="security-item">
+<span class="security-name">Arrêt manuel</span>
 <b id="manualState">🟢 DÉSACTIVÉ</b>
 </div>
 
-<div class="row">
-<span>ESP32</span>
-<b id="connectionState">🟢 CONNECTÉ</b>
 </div>
-
-</div>
-
-
-<!-- ================= COMMANDES ================= -->
-
-<div class="section">
-🕹️ Commandes
-</div>
-
-<div class="card">
-
-<div class="controls">
-
-<button id="ecoBtn" class="greenbtn">
-🌱 MODE ECO : OFF
-</button>
-
-<button id="notify">
-🔔 ACTIVER NOTIFICATIONS
-</button>
-
-</div>
-
-<button id="manual">
-🛑 ARRÊT MANUEL
-</button>
-
-<button id="reset">
-🔄 RÉARMER LE SYSTÈME
-</button>
-
-</div>
-
-
-<!-- ================= ENERGIE ================= -->
-
-<div class="section">
-📊 Énergie
-</div>
-
-<div class="card">
-
-<div class="row">
-
-<span>
-Énergie produite
-</span>
-
-<b>
-<span id="energy">0.0000</span> kWh
-</b>
-
-</div>
-
-<button id="zero">
-↺ REMETTRE LE COMPTEUR À ZÉRO
-</button>
-
-</div>
-
-
-<!-- ================= JOURNAL ================= -->
-
-<div class="section">
-📜 Journal
-</div>
-
-<div class="card">
-
-<div id="log" class="log"></div>
-
-<button id="clear">
-🧹 EFFACER LE JOURNAL
-</button>
 
 </div>
 
 
 <!-- ================= GRAPHIQUE ================= -->
 
-<div class="section">
-📈 Puissance
+<div class="card chart-card">
+
+<div class="card-title">
+📈 PUISSANCE
 </div>
+
+<br>
+
+<canvas id="chart" width="1000" height="190"></canvas>
+
+</div>
+
+
+<!-- ================= JOURNAL ================= -->
 
 <div class="card">
 
-<canvas id="chart"
-width="850"
-height="150">
-</canvas>
+<div class="card-title">
+📜 JOURNAL
+</div>
+
+<br>
+
+<div id="log" class="log"></div>
+
+<button id="clear" class="command">
+🧹 EFFACER LE JOURNAL
+</button>
 
 </div>
 
 
 <!-- ================= TESTS ================= -->
 
-<div class="section">
-🧪 Simulation des défauts
+<div class="card tests">
+
+<div class="card-title">
+🧪 SIMULATION DES DÉFAUTS
 </div>
 
-<div class="card">
-
 <div class="note">
-Ces boutons simulent des problèmes.
+Les boutons ci-dessous simulent des problèmes.
 Ils ne commandent aucun équipement réel.
 </div>
 
-<br>
+<div class="tests-grid">
 
-<div class="tests">
-
-<button class="danger" id="tEmergency">
-🛑 Arrêt d'urgence
+<button id="tEmergency" class="test danger">
+🛑 Arrêt urgence
 </button>
 
-<button class="danger" id="tSpeed">
+<button id="tSpeed" class="test danger">
 🔴 Survitesse
 </button>
 
-<button class="danger" id="tTemp">
+<button id="tTemp" class="test danger">
 🌡️ Surchauffe générateur
 </button>
 
-<button class="danger" id="tBearing">
+<button id="tBearing" class="test danger">
 🛞 Surchauffe roulement
 </button>
 
-<button class="warning" id="tDelta">
-🔋 DELTA pleine
+<button id="tDelta" class="test warning">
+🔋 Batterie pleine
 </button>
 
-<button class="warning" id="tWind">
-🌬️ Vent trop faible
+<button id="tWind" class="test warning">
+🌬️ Vent faible
 </button>
 
-<button class="warning" id="tOrientation">
+<button id="tOrientation" class="test warning">
 🧭 Mauvaise orientation
 </button>
 
-<button class="danger" id="tConnection">
+<button id="tConnection" class="test danger">
 📡 Perte ESP32
 </button>
 
-<button class="warning" id="tPower">
+<button id="tPower" class="test warning">
 ⚡ Forte production
 </button>
 
-<button class="warning" id="tBattery">
-🔋 Batterie faible
+<button id="tBattery" class="test warning">
+🔋 Batterie secours faible
 </button>
 
-<button id="tRestart">
+<button id="tRestart" class="test">
 🟢 Réinitialiser
 </button>
 
-<button id="tClear">
+<button id="tClear" class="test">
 🧹 Effacer journal
 </button>
 
@@ -820,26 +1285,65 @@ Ils ne commandent aucun équipement réel.
 </div>
 
 
+<!-- ================= NAVIGATION ================= -->
+
+<div class="bottom-nav">
+
+<div class="nav-item active">
+<span class="nav-icon">⌂</span>
+ACCUEIL
+</div>
+
+<div class="nav-item">
+<span class="nav-icon">📈</span>
+HISTORIQUE
+</div>
+
+<div class="nav-item">
+<span class="nav-icon">🔔</span>
+ALERTES
+</div>
+
+<div class="nav-item">
+<span class="nav-icon">⚙️</span>
+RÉGLAGES
+</div>
+
+<div class="nav-item">
+<span class="nav-icon">ⓘ</span>
+À PROPOS
+</div>
+
+</div>
+
+</div>
+
+
 <script>
 
-/* =====================================================
+/* =========================================================
    VARIABLES
-===================================================== */
+========================================================= */
 
 let running = true;
 let braking = false;
 let progressive = false;
+
 let brakeReason = "";
-let eco = false;
+
 let manual = false;
+let eco = false;
 let connected = true;
 
 let strongProduction = false;
 
 let rpm = 0;
+
 let temp = 32;
 let bearing = 29;
+
 let humidity = 55;
+let light = 425;
 
 let wind = 20;
 let windTarget = 20;
@@ -854,168 +1358,124 @@ let power = 0;
 let battery = 12.8;
 let secondary = 12.8;
 
+let batteryPercent = 50;
+let secondaryPercent = 50;
+
 let energy = 0;
 
 let history = [];
 
 
-/* =====================================================
-   RACCOURCI DOM
-===================================================== */
+/* =========================================================
+   DOM
+========================================================= */
 
 const $ = id => document.getElementById(id);
 
 
-/* =====================================================
+/* =========================================================
    JOURNAL
-===================================================== */
+========================================================= */
 
-function log(msg){
+function log(message){
 
-    const d = document.createElement("div");
+    const div = document.createElement("div");
 
-    d.className = "entry";
+    div.className = "entry";
 
-    d.innerHTML =
+    div.innerHTML =
         "<b>" +
         new Date().toLocaleTimeString("fr-FR") +
-        "</b> " +
-        msg;
+        "</b> — " +
+        message;
 
-    $("log").prepend(d);
+    $("log").prepend(div);
+
 }
 
 
-/* =====================================================
+/* =========================================================
    VOYANTS
-===================================================== */
+========================================================= */
 
 function dot(id,state){
 
     $(id).className =
         "dot " + state;
+
 }
 
 
-/* =====================================================
-   MODE ECO
-===================================================== */
+/* =========================================================
+   ECO
+========================================================= */
 
 function setEco(value,message){
 
     eco = value;
 
-    $("eco").classList.toggle(
-        "on",
+    $("ecoState").textContent =
         value
-    );
+        ?
+        "ACTIF"
+        :
+        "INACTIF";
 
-    $("ecoBtn").textContent =
-        "🌱 MODE ECO : " +
-        (
-            value
-            ? "ON"
-            : "OFF"
-        );
+    $("ecoState").style.background =
+        value
+        ?
+        "#176b3b"
+        :
+        "#273747";
+
+    $("ecoState").style.color =
+        value
+        ?
+        "#68f58a"
+        :
+        "#aebbc8";
 
     if(message){
 
-        $("status").textContent =
+        $("systemStatus").textContent =
             message;
 
     }
+
 }
 
 
-/* =====================================================
+/* =========================================================
    ALERTE CRITIQUE
-===================================================== */
+========================================================= */
 
 function critical(message){
 
-    $("alert").textContent =
-        "🚨 " + message;
+    document.body.classList.add("critical");
 
-    $("alert").classList.add("on");
+    $("systemStatus").textContent =
+        "⚠️ " + message;
 
-    document.body.classList.add(
-        "critical"
-    );
-
-    if(
-        "Notification" in window &&
-        Notification.permission === "granted"
-    ){
-
-        new Notification(
-            "🚨 Éolienne",
-            {
-                body: message
-            }
-        );
-
-    }
-
-    if(navigator.vibrate){
-
-        navigator.vibrate([
-            400,
-            200,
-            400
-        ]);
-
-    }
 }
 
 
-/* =====================================================
-   EFFACER ALERTE
-===================================================== */
+/* =========================================================
+   FIN ALERTE
+========================================================= */
 
 function clearCritical(){
 
-    $("alert").classList.remove(
-        "on"
-    );
+    document.body.classList.remove("critical");
 
-    document.body.classList.remove(
-        "critical"
-    );
+    $("systemStatus").textContent =
+        "Système opérationnel";
+
 }
 
 
-/* =====================================================
-   NOTIFICATIONS
-===================================================== */
-
-$("notify").onclick = async () => {
-
-    if(
-        !("Notification" in window)
-    ){
-
-        alert(
-            "Les notifications ne sont pas disponibles."
-        );
-
-        return;
-    }
-
-    const permission =
-        await Notification.requestPermission();
-
-    $("notify").textContent =
-        permission === "granted"
-        ?
-        "🔔 NOTIFICATIONS : ACTIVÉES"
-        :
-        "🔕 NOTIFICATIONS : REFUSÉES";
-};
-
-
-/* =====================================================
-   FREINAGE AUTOMATIQUE
-===================================================== */
+/* =========================================================
+   FREINAGE
+========================================================= */
 
 function brakeStart(reason,slow){
 
@@ -1034,47 +1494,43 @@ function brakeStart(reason,slow){
         ?
         "🟡 FREINAGE PROGRESSIF"
         :
-        "🔴 FREIN ACTIF";
+        "🔴 FREIN D'URGENCE";
 
 
-    if(
-        reason === "DELTA PLEINE"
-    ){
+    if(slow){
 
         clearCritical();
 
-        $("status").textContent =
-            "🟡 ARRÊT PROGRESSIF — DELTA PLEINE";
+        $("systemStatus").textContent =
+            "🟡 ARRÊT PROGRESSIF";
 
         log(
-            "🟡 DELTA pleine — arrêt progressif commencé à " +
-            Math.round(rpm) +
-            " tr/min"
+            "🟡 " +
+            reason +
+            " — freinage progressif"
         );
 
     }
     else{
 
         critical(
-            "FREIN D'URGENCE AUTOMATIQUE — " +
+            "FREIN D'URGENCE — " +
             reason
         );
 
         log(
             "🔴 FREIN D'URGENCE AUTOMATIQUE — " +
-            reason +
-            " — rotor " +
-            Math.round(rpm) +
-            " tr/min"
+            reason
         );
 
     }
+
 }
 
 
-/* =====================================================
-   FREIN D'URGENCE MANUEL
-===================================================== */
+/* =========================================================
+   FREIN MANUEL
+========================================================= */
 
 $("emergency").onclick = () => {
 
@@ -1085,7 +1541,7 @@ $("emergency").onclick = () => {
     ){
 
         brakeStart(
-            "ARRÊT D'URGENCE MANUEL",
+            "ARRÊT MANUEL D'URGENCE",
             false
         );
 
@@ -1094,80 +1550,63 @@ $("emergency").onclick = () => {
 };
 
 
-/* =====================================================
-   ARRET MANUEL
-===================================================== */
+/* =========================================================
+   ARRÊT MANUEL
+========================================================= */
 
 $("manual").onclick = () => {
 
     manual = !manual;
 
-    running = !manual;
+    if(manual){
 
-    $("manualState").textContent =
-        manual
-        ?
-        "🔴 ACTIVÉ"
-        :
-        "🟢 DÉSACTIVÉ";
+        running = false;
 
-    $("status").textContent =
-        manual
-        ?
-        "🛑 ARRÊT MANUEL"
-        :
-        "🟢 SIMULATION AUTOMATIQUE";
+        $("manualState").textContent =
+            "🔴 ACTIVÉ";
 
-    log(
-        manual
-        ?
-        "🛑 Arrêt manuel activé"
-        :
-        "🟢 Arrêt manuel désactivé"
-    );
-};
+        $("brakeState").textContent =
+            "🛑 ARRÊT MANUEL";
 
+        $("systemStatus").textContent =
+            "🛑 ARRÊT MANUEL";
 
-/* =====================================================
-   MODE ECO MANUEL
-===================================================== */
+        log(
+            "🛑 Arrêt manuel activé"
+        );
 
-$("ecoBtn").onclick = () => {
+    }
+    else{
 
-    if(braking){
+        running = true;
 
-        return;
+        $("manualState").textContent =
+            "🟢 DÉSACTIVÉ";
+
+        $("brakeState").textContent =
+            "🟢 LIBÉRÉ";
+
+        $("systemStatus").textContent =
+            "🟢 Système opérationnel";
+
+        log(
+            "🟢 Arrêt manuel désactivé"
+        );
 
     }
 
-    setEco(
-        !eco,
-        eco
-        ?
-        "🟢 MODE ECO DÉSACTIVÉ"
-        :
-        "🌱 MODE ECO ACTIVÉ"
-    );
-
-    log(
-        eco
-        ?
-        "🌱 Mode ECO activé manuellement"
-        :
-        "🌱 Mode ECO désactivé manuellement"
-    );
 };
 
 
-/* =====================================================
-   REARMEMENT
-===================================================== */
+/* =========================================================
+   RESET
+========================================================= */
 
 $("reset").onclick = () => {
 
     if(
         !confirm(
-            "Confirmer le réarmement du système ?"
+            "Réarmer complètement le système ?"
         )
     ){
 
@@ -1183,8 +1622,6 @@ $("reset").onclick = () => {
     strongProduction = false;
 
     rpm = 0;
-    power = 0;
-    current = 0;
 
     temp = 32;
     bearing = 29;
@@ -1192,21 +1629,19 @@ $("reset").onclick = () => {
     wind = 20;
     windTarget = 20;
 
+    voltage = 12;
+    current = 0;
+    power = 0;
+
     setEco(false);
 
     clearCritical();
-
-    $("status").textContent =
-        "🟢 SIMULATION AUTOMATIQUE";
 
     $("brakeState").textContent =
         "🟢 LIBÉRÉ";
 
     $("manualState").textContent =
         "🟢 DÉSACTIVÉ";
-
-    $("connectionState").textContent =
-        "🟢 CONNECTÉ";
 
     $("speedState").textContent =
         "🟢 OK";
@@ -1217,96 +1652,82 @@ $("reset").onclick = () => {
     $("bearingState").textContent =
         "🟢 OK";
 
-    $("orientationState").textContent =
-        "🟢 FACE AU VENT";
-
-    dot("rpmDot","green");
-    dot("tempDot","green");
-    dot("bearingDot","green");
-    dot("powerDot","green");
-    dot("batteryDot","green");
+    $("connectionHeader").textContent =
+        "Connecté à l'ESP32";
 
     log(
-        "🟢 Système réarmé — simulation automatique"
+        "🟢 Système réarmé"
     );
+
 };
 
 
-/* =====================================================
-   COMPTEUR ENERGIE
-===================================================== */
+/* =========================================================
+   COMPTEUR
+========================================================= */
 
 $("zero").onclick = () => {
 
-    if(
-        confirm(
-            "Remettre le compteur d'énergie à zéro ?"
-        )
-    ){
+    energy = 0;
 
-        energy = 0;
+    $("energy").textContent =
+        "0.0000";
 
-        $("energy").textContent =
-            "0.0000";
+    log(
+        "↻ Compteur énergie remis à zéro"
+    );
 
-        log(
-            "↺ Compteur d'énergie remis à zéro"
-        );
-
-    }
 };
 
 
-/* =====================================================
-   TEST DEFAUT CRITIQUE
-===================================================== */
+/* =========================================================
+   EFFACER JOURNAL
+========================================================= */
 
-function testCritical(message,kind){
+function clearLog(){
+
+    $("log").innerHTML = "";
+
+}
+
+$("clear").onclick = clearLog;
+
+$("tClear").onclick = clearLog;
+
+
+/* =========================================================
+   TESTS CRITIQUES
+========================================================= */
+
+function testCritical(message,type){
+
+    critical(message);
 
     running = false;
     braking = true;
     progressive = false;
 
-    strongProduction = false;
-
-    critical(message);
+    brakeReason = type;
 
     $("brakeState").textContent =
         "🔴 FREIN D'URGENCE";
 
     log(
-        "🔴 TEST — " +
-        kind +
-        " → frein d'urgence automatique"
+        "🔴 TEST " +
+        type +
+        " → frein automatique"
     );
+
 }
 
 
-/* =====================================================
-   TEST URGENCE
-===================================================== */
-
-$("tEmergency").onclick = () => {
-
-    rpm = Math.max(
-        rpm,
-        300
-    );
-
-    testCritical(
-        "FREIN D'URGENCE AUTOMATIQUE",
-        "arrêt d'urgence"
-    );
-};
-
-
-/* =====================================================
+/* =========================================================
    TEST SURVITESSE
-===================================================== */
+========================================================= */
 
 $("tSpeed").onclick = () => {
 
-    rpm = 720;
+    rpm = 700;
 
     dot(
         "rpmDot",
@@ -1317,19 +1738,20 @@ $("tSpeed").onclick = () => {
         "🔴 SURVITESSE";
 
     testCritical(
-        "SURVITESSE — 720 tr/min",
-        "survitesse"
+        "SURVITESSE",
+        "SURVITESSE"
     );
+
 };
 
 
-/* =====================================================
-   TEST SURCHAUFFE GENERATEUR
-===================================================== */
+/* =========================================================
+   TEST TEMP
+========================================================= */
 
 $("tTemp").onclick = () => {
 
-    temp = 102;
+    temp = 105;
 
     dot(
         "tempDot",
@@ -1340,19 +1762,20 @@ $("tTemp").onclick = () => {
         "🔴 ALERTE";
 
     testCritical(
-        "SURCHAUFFE GÉNÉRATEUR — 102 °C",
-        "surchauffe générateur"
+        "SURCHAUFFE GÉNÉRATEUR",
+        "SURCHAUFFE GÉNÉRATEUR"
     );
+
 };
 
 
-/* =====================================================
-   TEST SURCHAUFFE ROULEMENT
-===================================================== */
+/* =========================================================
+   TEST ROULEMENT
+========================================================= */
 
 $("tBearing").onclick = () => {
 
-    bearing = 87;
+    bearing = 90;
 
     dot(
         "bearingDot",
@@ -1363,39 +1786,60 @@ $("tBearing").onclick = () => {
         "🔴 ALERTE";
 
     testCritical(
-        "SURCHAUFFE ROULEMENT — 87 °C",
-        "surchauffe roulement"
+        "SURCHAUFFE ROULEMENT",
+        "SURCHAUFFE ROULEMENT"
     );
+
 };
 
 
-/* =====================================================
-   TEST DELTA PLEINE
-===================================================== */
+/* =========================================================
+   TEST URGENCE
+========================================================= */
 
-$("tDelta").onclick = () => {
+$("tEmergency").onclick = () => {
 
     rpm = Math.max(
         rpm,
-        500
+        300
     );
 
-    power = 400;
-
-    brakeStart(
-        "DELTA PLEINE",
-        true
+    testCritical(
+        "ARRÊT D'URGENCE",
+        "ARRÊT D'URGENCE"
     );
+
 };
 
 
-/* =====================================================
+/* =========================================================
+   TEST BATTERIE PLEINE
+========================================================= */
+
+$("tDelta").onclick = () => {
+
+    batteryPercent = 100;
+
+    battery = 14.4;
+
+    $("batteryPercent").textContent =
+        "100";
+
+    log(
+        "🟡 Batterie secours pleine"
+    );
+
+};
+
+
+/* =========================================================
    TEST VENT FAIBLE
-===================================================== */
+========================================================= */
 
 $("tWind").onclick = () => {
 
     wind = 2;
+
     windTarget = 2;
 
     setEco(
@@ -1409,115 +1853,111 @@ $("tWind").onclick = () => {
     );
 
     log(
-        "🟡 Vent faible — éolienne maintenue en fonctionnement"
+        "🟡 Vent faible — MODE ECO"
     );
+
 };
 
 
-/* =====================================================
+/* =========================================================
    TEST ORIENTATION
-===================================================== */
+========================================================= */
 
 $("tOrientation").onclick = () => {
 
     windDeg = 270;
+
     turbDeg = 150;
 
     $("orientationState").textContent =
         "🟡 CORRECTION";
 
-    $("status").textContent =
-        "🧭 CORRECTION D'ORIENTATION";
-
     log(
         "🟡 Mauvaise orientation — correction automatique"
     );
+
 };
 
 
-/* =====================================================
-   TEST PERTE ESP32
-===================================================== */
+/* =========================================================
+   TEST ESP32
+========================================================= */
 
 $("tConnection").onclick = () => {
 
     connected = false;
-    running = false;
 
-    $("connectionState").textContent =
-        "🔴 DÉCONNECTÉ";
+    $("connectionHeader").textContent =
+        "⚠️ ESP32 DÉCONNECTÉ";
+
+    $("systemStatus").textContent =
+        "⚠️ PERTE COMMUNICATION ESP32";
 
     brakeStart(
         "PERTE COMMUNICATION ESP32",
         false
     );
+
 };
 
 
-/* =====================================================
-   FORTE PRODUCTION
-=====================================================
-
-   IMPORTANT :
-
-   Aucun ralentissement.
-
-   Le mode est actif à partir de 550 W
-   et se désactive sous 550 W.
-===================================================== */
+/* =========================================================
+   TEST FORTE PRODUCTION
+========================================================= */
 
 $("tPower").onclick = () => {
 
-    running = true;
-    braking = false;
-
     strongProduction = true;
 
-    rpm = 620;
-    power = 600;
+    power = 580;
+
     current = 45;
 
-    clearCritical();
+    rpm = 620;
 
     dot(
         "powerDot",
         "yellow"
     );
 
-    $("status").textContent =
+    $("systemStatus").textContent =
         "🟡 FORTE PRODUCTION";
 
     log(
-        "🟡 Forte production — aucun ralentissement"
+        "🟡 Forte production détectée"
     );
+
 };
 
 
-/* =====================================================
+/* =========================================================
    TEST BATTERIE FAIBLE
-===================================================== */
+========================================================= */
 
 $("tBattery").onclick = () => {
 
-    battery = 11.75;
+    batteryPercent = 5;
+
+    battery = 11.8;
 
     dot(
         "batteryDot",
         "yellow"
     );
 
-    $("status").textContent =
+    $("systemStatus").textContent =
         "🟡 BATTERIE SECOURS FAIBLE";
 
     log(
-        "🟡 Batterie secours faible — 11,75 V"
+        "🟡 Batterie secours faible — priorité de charge"
     );
+
 };
 
 
-/* =====================================================
-   REINITIALISATION
-===================================================== */
+/* =========================================================
+   RESET TEST
+========================================================= */
 
 $("tRestart").onclick = () => {
 
@@ -1526,43 +1966,168 @@ $("tRestart").onclick = () => {
 };
 
 
-/* =====================================================
-   JOURNAL
-===================================================== */
+/* =========================================================
+   CALCUL DIRECTION
+========================================================= */
 
-function clearLog(){
+function windDirectionName(deg){
 
-    $("log").innerHTML = "";
+    const names = [
+        "Nord",
+        "Nord-Est",
+        "Est",
+        "Sud-Est",
+        "Sud",
+        "Sud-Ouest",
+        "Ouest",
+        "Nord-Ouest"
+    ];
 
-    log(
-        "🧹 Journal effacé"
-    );
+    return names[
+        Math.round(deg / 45) % 8
+    ];
+
 }
 
-$("clear").onclick = clearLog;
 
-$("tClear").onclick = clearLog;
+/* =========================================================
+   GESTION BATTERIES
+========================================================= */
+
+function manageBatteries(){
+
+    /*
+    ======================================================
+    PRIORITÉ BATTERIE SECOURS
+    ======================================================
+
+    Si la batterie secours est faible :
+    → toute l'énergie disponible va à la secours
+    → la principale ne reçoit RIEN
+
+    Quand secours atteint 100 % :
+    → charge principale autorisée
+    */
+
+    if(
+        batteryPercent < 100
+    ){
+
+        const charge =
+            power / 50000;
+
+        batteryPercent =
+            Math.min(
+                100,
+                batteryPercent + charge
+            );
+
+        battery =
+            11.8 +
+            (
+                batteryPercent /
+                100
+            ) * 2.6;
+
+        $("backupStatus").textContent =
+            "CHARGE PRIORITAIRE";
+
+        $("mainStatus").textContent =
+            "EN ATTENTE";
+
+        $("chargePriority").textContent =
+            "🔋 PRIORITÉ : BATTERIE SECOURS";
+
+    }
+
+    else{
+
+        /*
+        Batterie secours pleine
+        */
+
+        battery = 14.4;
+
+        $("backupStatus").textContent =
+            "PLEINE";
+
+        /*
+        Maintenant la principale
+        peut recevoir l'énergie.
+        */
+
+        const charge =
+            power / 50000;
+
+        secondaryPercent =
+            Math.min(
+                100,
+                secondaryPercent + charge
+            );
+
+        secondary =
+            11.8 +
+            (
+                secondaryPercent /
+                100
+            ) * 2.6;
+
+        $("mainStatus").textContent =
+            "CHARGE";
+
+        $("chargePriority").textContent =
+            "🔋 SECOURS PLEINE → CHARGE PRINCIPALE";
+
+    }
 
 
-/* =====================================================
+    $("batteryPercent").textContent =
+        Math.round(
+            batteryPercent
+        );
+
+    $("secondaryPercent").textContent =
+        Math.round(
+            secondaryPercent
+        );
+
+
+    $("battery").textContent =
+        battery.toFixed(2);
+
+    $("secondary").textContent =
+        secondary.toFixed(2);
+
+
+    $("batteryFill").style.width =
+        batteryPercent + "%";
+
+    $("secondaryFill").style.width =
+        secondaryPercent + "%";
+
+}
+
+
+/* =========================================================
    GRAPHIQUE
-===================================================== */
+========================================================= */
 
 function draw(){
 
-    const c = $("chart");
-    const ctx = c.getContext("2d");
+    const canvas =
+        $("chart");
+
+    const ctx =
+        canvas.getContext("2d");
 
     ctx.clearRect(
         0,
         0,
-        c.width,
-        c.height
+        canvas.width,
+        canvas.height
     );
 
-    if(
-        history.length < 2
-    ){
+    if(history.length < 2){
 
         return;
 
@@ -1579,31 +2144,32 @@ function draw(){
     ctx.lineWidth = 3;
 
     history.forEach(
-        (v,i) => {
+        (value,index) => {
 
             const x =
                 5 +
-                i *
+                index *
                 (
-                    c.width - 10
+                    canvas.width - 10
                 ) /
                 (
                     history.length - 1
                 );
 
             const y =
-                c.height -
-                8 -
+                canvas.height -
+                10 -
                 (
-                    v / max
+                    value /
+                    max
                 ) *
                 (
-                    c.height - 16
+                    canvas.height - 20
                 );
 
-            if(i){
+            if(index === 0){
 
-                ctx.lineTo(
+                ctx.moveTo(
                     x,
                     y
                 );
@@ -1611,7 +2177,7 @@ function draw(){
             }
             else{
 
-                ctx.moveTo(
+                ctx.lineTo(
                     x,
                     y
                 );
@@ -1622,90 +2188,69 @@ function draw(){
     );
 
     ctx.stroke();
+
 }
 
 
-/* =====================================================
+/* =========================================================
    BOUCLE PRINCIPALE
-===================================================== */
+========================================================= */
 
 function update(){
 
-    /*
-    ====================================================
-    FREINAGE PROGRESSIF
-    ====================================================
-    */
+    /* =====================================================
+       FREINAGE PROGRESSIF
+    ===================================================== */
 
     if(
         braking &&
         progressive
     ){
 
+        /*
+        La vitesse reste visible pendant
+        tout le freinage.
+        */
+
         rpm =
             Math.max(
                 0,
                 rpm -
                 Math.max(
-                    8,
-                    rpm * 0.055
+                    7,
+                    rpm * .045
                 )
             );
 
         power =
             Math.max(
                 0,
-                power - 20
+                power - 15
             );
 
         current =
             Math.max(
                 0,
-                current - 1.5
+                current - 1
             );
 
-        if(
-            brakeReason ===
-            "DELTA PLEINE"
-        ){
-
-            $("status").textContent =
-                "🟡 ARRÊT PROGRESSIF — DELTA PLEINE";
-
-        }
-
-        if(
-            rpm <= 1
-        ){
+        if(rpm <= 1){
 
             rpm = 0;
             power = 0;
             current = 0;
 
-            braking = true;
-            progressive = false;
-
             $("brakeState").textContent =
                 "🛑 ARRÊTÉ";
 
-            $("status").textContent =
-                "🟢 ÉOLIENNE ARRÊTÉE — " +
-                brakeReason;
-
-            log(
-                "🟢 Rotor arrêté — " +
-                brakeReason
-            );
         }
 
     }
 
 
-    /*
-    ====================================================
-    FREINAGE D'URGENCE
-    ====================================================
-    */
+    /* =====================================================
+       FREINAGE URGENCE
+    ===================================================== */
 
     else if(
         braking &&
@@ -1717,26 +2262,24 @@ function update(){
                 0,
                 rpm -
                 Math.max(
-                    35,
-                    rpm * 0.22
+                    30,
+                    rpm * .20
                 )
             );
 
         power =
             Math.max(
                 0,
-                power - 80
+                power - 70
             );
 
         current =
             Math.max(
                 0,
-                current - 5
+                current - 4
             );
 
-        if(
-            rpm <= 1
-        ){
+        if(rpm <= 1){
 
             rpm = 0;
             power = 0;
@@ -1744,16 +2287,15 @@ function update(){
 
             $("brakeState").textContent =
                 "🛑 ARRÊTÉ";
+
         }
 
     }
 
 
-    /*
-    ====================================================
-    FONCTIONNEMENT NORMAL
-    ====================================================
-    */
+    /* =====================================================
+       FONCTIONNEMENT NORMAL
+    ===================================================== */
 
     else if(
         running &&
@@ -1762,13 +2304,11 @@ function update(){
     ){
 
         /*
-        ----------------------------
-        VENT
-        ----------------------------
+        Variation du vent
         */
 
         if(
-            Math.random() < 0.08
+            Math.random() < .08
         ){
 
             windTarget =
@@ -1781,13 +2321,11 @@ function update(){
             (
                 windTarget -
                 wind
-            ) * 0.08;
+            ) * .08;
 
 
         /*
-        ----------------------------
-        DIRECTION
-        ----------------------------
+        Direction
         */
 
         windDeg =
@@ -1801,36 +2339,27 @@ function update(){
 
 
         /*
-        ----------------------------
-        ORIENTATION AUTOMATIQUE
-        ----------------------------
+        Orientation automatique
         */
 
-        let diff =
-            Math.abs(
+        const correction =
+            (
                 (
                     windDeg -
                     turbDeg +
                     540
-                ) % 360 -
-                180
-            );
+                ) % 360
+            ) - 180;
+
 
         if(
-            diff > 15
+            Math.abs(correction) > 2
         ){
 
             turbDeg =
                 (
                     turbDeg +
-                    (
-                        (
-                            windDeg -
-                            turbDeg +
-                            540
-                        ) % 360 -
-                        180
-                    ) * .03 +
+                    correction * .05 +
                     360
                 ) % 360;
 
@@ -1838,9 +2367,7 @@ function update(){
 
 
         /*
-        ----------------------------
         MODE ECO
-        ----------------------------
 
         < 7 km/h = ECO
         >= 15 km/h = ECO OFF
@@ -1856,14 +2383,10 @@ function update(){
                 "🌱 MODE ECO — VENT FAIBLE"
             );
 
-            dot(
-                "powerDot",
-                "yellow"
+            log(
+                "🟡 Vent < 7 km/h — ECO activé"
             );
 
-            log(
-                "🟡 Vent < 7 km/h — MODE ECO activé"
-            );
         }
 
 
@@ -1874,40 +2397,36 @@ function update(){
 
             setEco(
                 false,
-                "🟢 VENT >= 15 km/h — MODE ECO DÉSACTIVÉ"
-            );
-
-            dot(
-                "powerDot",
-                "green"
+                "🟢 MODE ECO DÉSACTIVÉ"
             );
 
             log(
-                "🟢 Vent >= 15 km/h — MODE ECO désactivé"
+                "🟢 Vent >= 15 km/h — ECO désactivé"
             );
+
         }
 
 
         /*
-        ----------------------------
-        ROTOR
-        ----------------------------
+        RPM
         */
 
         let targetRPM =
             Math.min(
-                680,
+                620,
                 Math.max(
                     25,
                     wind * 9
                 )
             );
 
+
         if(eco){
 
             targetRPM *= .75;
 
         }
+
 
         rpm +=
             (
@@ -1917,30 +2436,41 @@ function update(){
 
 
         /*
-        ----------------------------
-        GENERATION
-        ----------------------------
+        ==================================================
+        PRODUCTION
+        ==================================================
         */
 
         voltage =
             Math.min(
-                15,
+                48,
                 12 +
-                rpm * .0085
+                rpm * .045
             );
+
+
+        /*
+        Courant réaliste.
+        */
 
         current =
             Math.max(
                 0,
-                wind *
-                wind *
-                wind *
-                .0007 +
                 (
-                    Math.random() -
-                    .5
-                ) * .3
+                    wind *
+                    wind *
+                    wind *
+                    .018
+                ) +
+                (
+                    Math.random() - .5
+                ) * .8
             );
+
+
+        /*
+        PUISSANCE RESTE EN WATTS
+        */
 
         power =
             Math.max(
@@ -1948,6 +2478,11 @@ function update(){
                 voltage *
                 current
             );
+
+
+        /*
+        ECO
+        */
 
         if(eco){
 
@@ -1961,28 +2496,15 @@ function update(){
         FORTE PRODUCTION
         ==================================================
 
-        AUCUN RALENTISSEMENT.
+        IMPORTANT :
+        plus de ralentissement automatique.
 
-        >= 550 W : activation
-        < 550 W  : désactivation
-        ==================================================
+        On conserve simplement l'alerte jaune.
         */
 
         if(
-            power >= 550
+            power >= 500
         ){
-
-            if(
-                !strongProduction
-            ){
-
-                log(
-                    "🟡 Forte production activée — " +
-                    Math.round(power) +
-                    " W"
-                );
-
-            }
 
             strongProduction = true;
 
@@ -1991,11 +2513,16 @@ function update(){
                 "yellow"
             );
 
-            $("status").textContent =
+            $("systemStatus").textContent =
                 "🟡 FORTE PRODUCTION";
 
         }
 
+
+        /*
+        L'alerte forte production disparaît
+        sous 550 W comme demandé précédemment.
+        */
 
         if(
             strongProduction &&
@@ -2009,92 +2536,119 @@ function update(){
                 "green"
             );
 
-            $("status").textContent =
-                "🟢 PRODUCTION NORMALE";
+            $("systemStatus").textContent =
+                "🟢 Système opérationnel";
 
             log(
-                "🟢 Forte production désactivée — puissance < 550 W"
+                "🟢 Forte production terminée — puissance < 550 W"
             );
 
         }
 
 
         /*
-        ----------------------------
-        TEMPERATURES
-        ----------------------------
+        ==================================================
+        TEMPÉRATURE GÉNÉRATEUR
+        ==================================================
+
+        Correction par rapport à l'ancienne version :
+
+        La température ne monte plus trop vite.
+
+        Base :
+        30°C
+
+        Influence puissance :
+        faible
+
+        Refroidissement :
+        permanent
         */
+
+        const targetTemp =
+            30 +
+            power * .018 +
+            rpm * .006;
+
 
         temp +=
             (
-                28 +
-                power * .045 +
-                rpm * .008 -
+                targetTemp -
                 temp
-            ) * .06;
-
-        bearing +=
-            (
-                27 +
-                power * .018 +
-                rpm * .004 -
-                bearing
-            ) * .06;
+            ) * .025;
 
 
         /*
-        ----------------------------
-        HUMIDITE
-        ----------------------------
+        ROULEMENT
         */
+
+        const targetBearing =
+            28 +
+            power * .009 +
+            rpm * .003;
+
+
+        bearing +=
+            (
+                targetBearing -
+                bearing
+            ) * .025;
+
+
+        /*
+        HUMIDITE
+        */
+
+        humidity +=
+            (
+                Math.random() -
+                .5
+            ) * .4;
+
 
         humidity =
             Math.max(
                 30,
                 Math.min(
                     85,
-                    humidity +
-                    (
-                        Math.random() -
-                        .5
-                    ) * .3
+                    humidity
                 )
             );
 
 
         /*
-        ----------------------------
-        BATTERIES
-        ----------------------------
+        LUMINOSITE
         */
 
-        battery =
-            Math.min(
-                14.4,
-                Math.max(
-                    11.8,
-                    battery +
-                    power / 180000 -
-                    .00025
-                )
-            );
+        light +=
+            (
+                Math.random() -
+                .5
+            ) * 8;
 
-        secondary =
-            Math.min(
-                14.4,
-                Math.max(
-                    11.8,
-                    secondary +
-                    power / 260000 -
-                    .00018
+        light =
+            Math.max(
+                50,
+                Math.min(
+                    1000,
+                    light
                 )
             );
 
 
         /*
-        ----------------------------
+        ==================================================
+        BATTERIES
+        ==================================================
+        */
+
+        manageBatteries();
+
+
+        /*
+        ==================================================
         ENERGIE
-        ----------------------------
+        ==================================================
         */
 
         energy +=
@@ -2167,71 +2721,108 @@ function update(){
 
         }
 
+
     }
 
 
-    /*
-    ====================================================
-    VOYANTS JAUNE / VERT
-    ====================================================
-    */
+    /* =====================================================
+       VOYANTS
+    ===================================================== */
 
     if(
-        !braking
+        rpm < 600
     ){
 
         dot(
             "rpmDot",
-            rpm >= 600
-            ?
-            "yellow"
-            :
             "green"
         );
+
+    }
+    else if(
+        rpm < 650
+    ){
+
+        dot(
+            "rpmDot",
+            "yellow"
+        );
+
+    }
+
+
+    if(
+        temp < 75
+    ){
 
         dot(
             "tempDot",
-            temp >= 75
-            ?
-            "yellow"
-            :
             "green"
         );
+
+        $("tempState").textContent =
+            "🟢 OK";
+
+    }
+    else if(
+        temp < 100
+    ){
+
+        dot(
+            "tempDot",
+            "yellow"
+        );
+
+        $("tempState").textContent =
+            "🟡 ÉLEVÉE";
+
+    }
+
+
+    if(
+        bearing < 60
+    ){
 
         dot(
             "bearingDot",
-            bearing >= 60
-            ?
-            "yellow"
-            :
             "green"
         );
 
+        $("bearingState").textContent =
+            "🟢 OK";
+
+    }
+    else if(
+        bearing < 85
+    ){
+
         dot(
-            "powerDot",
-            strongProduction
-            ?
+            "bearingDot",
             "yellow"
-            :
-            "green"
         );
+
+        $("bearingState").textContent =
+            "🟡 ÉLEVÉE";
+
+    }
+
+
+    if(
+        batteryPercent <= 20
+    ){
 
         dot(
             "batteryDot",
-            battery <= 12
-            ?
             "yellow"
-            :
-            "green"
         );
 
     }
 
 
     /*
-    ====================================================
-    AFFICHAGE
-    ====================================================
+    =====================================================
+    AFFICHAGE VALEURS
+    =====================================================
     */
 
     $("rpm").textContent =
@@ -2246,29 +2837,28 @@ function update(){
     $("humidity").textContent =
         Math.round(humidity);
 
+    $("light").textContent =
+        Math.round(light);
+
     $("voltage").textContent =
         voltage.toFixed(1);
 
     $("current").textContent =
         current.toFixed(1);
 
+    /*
+    PUISSANCE TOUJOURS EN W
+    */
+
     $("power").textContent =
         Math.round(power);
-
-    $("battery").textContent =
-        battery.toFixed(2);
-
-    $("secondary").textContent =
-        secondary.toFixed(2);
 
     $("energy").textContent =
         energy.toFixed(4);
 
 
     /*
-    ====================================================
     VENT
-    ====================================================
     */
 
     $("wind").textContent =
@@ -2279,21 +2869,27 @@ function update(){
             wind / 3.6
         ).toFixed(1);
 
+
     $("windDeg").textContent =
-        Math.round(windDeg) +
-        "°";
+        Math.round(windDeg);
+
+    $("windName").textContent =
+        windDirectionName(
+            windDeg
+        );
+
 
     $("turbDeg").textContent =
         Math.round(turbDeg);
 
 
     /*
-    ====================================================
+    =====================================================
     ORIENTATION
-    ====================================================
+    =====================================================
     */
 
-    let orientationDiff =
+    const diff =
         Math.abs(
             (
                 windDeg -
@@ -2303,88 +2899,89 @@ function update(){
             180
         );
 
-    $("orientationState").textContent =
-        orientationDiff <= 15
-        ?
-        "🟢 FACE AU VENT"
-        :
-        "🟡 CORRECTION";
+
+    if(
+        diff <= 15
+    ){
+
+        $("orientationState").textContent =
+            "🟢 FACE AU VENT";
+
+        $("orientationText").textContent =
+            "🟢 Face au vent";
+
+    }
+    else if(
+        diff <= 30
+    ){
+
+        $("orientationState").textContent =
+            "🟡 CORRECTION";
+
+        $("orientationText").textContent =
+            "🟡 Correction";
+
+    }
+    else{
+
+        $("orientationState").textContent =
+            "🟡 MAUVAISE ORIENTATION";
+
+        $("orientationText").textContent =
+            "🟡 Correction";
+
+    }
 
 
     /*
-    ====================================================
-    CONNEXION
-    ====================================================
+    =====================================================
+    BARRES
+    =====================================================
     */
 
-    $("connectionState").textContent =
-        connected
-        ?
-        "🟢 CONNECTÉ"
-        :
-        "🔴 DÉCONNECTÉ";
-
-
-    /*
-    ====================================================
-    BATTERIES
-    ====================================================
-    */
-
-    $("batteryFill").style.width =
-        Math.max(
-            0,
-            Math.min(
-                100,
-                (
-                    (
-                        battery -
-                        11.8
-                    ) /
-                    2.6
-                ) * 100
-            )
+    $("rpmBar").style.width =
+        Math.min(
+            100,
+            rpm / 650 * 100
         ) + "%";
 
 
-    $("secondaryFill").style.width =
-        Math.max(
-            0,
-            Math.min(
-                100,
-                (
-                    (
-                        secondary -
-                        11.8
-                    ) /
-                    2.6
-                ) * 100
-            )
+    $("tempBar").style.width =
+        Math.min(
+            100,
+            temp / 100 * 100
+        ) + "%";
+
+
+    $("bearingBar").style.width =
+        Math.min(
+            100,
+            bearing / 85 * 100
         ) + "%";
 
 
     /*
-    ====================================================
+    =====================================================
     BOUSSOLE
-    ====================================================
+    =====================================================
     */
 
-    $("arrow").style.setProperty(
-        "--wind",
-        windDeg + "deg"
-    );
+    $("windArrow").style.transform =
+        "rotate(" +
+        windDeg +
+        "deg)";
 
 
     /*
-    ====================================================
-    GRAPHIQUE
-    ====================================================
+    =====================================================
+    HISTORIQUE PUISSANCE
+    =====================================================
     */
 
     history.push(power);
 
     if(
-        history.length > 70
+        history.length > 80
     ){
 
         history.shift();
@@ -2396,16 +2993,20 @@ function update(){
 }
 
 
-/* =====================================================
-   DEMARRAGE AUTOMATIQUE
-===================================================== */
+/* =========================================================
+   DEMARRAGE
+========================================================= */
 
 log(
     "🟢 Système prêt"
 );
 
 log(
-    "▶️ Simulation démarrée automatiquement"
+    "▶️ Simulation automatique démarrée"
+);
+
+log(
+    "🔋 Gestion batteries : priorité secours"
 );
 
 setInterval(
