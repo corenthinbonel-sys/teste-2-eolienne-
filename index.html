@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<meta name="theme-color" content="#0b1220">
+
+<title>Éolienne - Tableau de bord</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 16px;
+    background: #0b1220;
+    color: white;
+    font-family: Arial, sans-serif;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+h1 {
+    font-size: 25px;
+    margin: 0;
+}
+
+.subtitle {
+    color: #94a3b8;
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+.online {
+    color: #4ade80;
+    font-size: 12px;
+}
+
+.status {
+    padding: 14px;
+    border-radius: 15px;
+    text-align: center;
+    font-weight: bold;
+    background: #064e3b;
+    color: #86efac;
+    margin-bottom: 12px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.card {
+    background: #151f31;
+    border: 1px solid #2b3952;
+    border-radius: 16px;
+    padding: 15px;
+}
+
+.wide {
+    grid-column: 1 / -1;
+    text-align: center;
+}
+
+.label {
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.num {
+    font-size: 29px;
+    font-weight: 850;
+    margin-top: 4px;
+}
+
+.wide .num {
+    font-size: 43px;
+}
+
+.unit {
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.section {
+    margin-top: 18px;
+}
+
+.section h2 {
+    font-size: 17px;
+    margin: 0 0 9px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #2b3952;
+}
+
+.row:last-child {
+    border-bottom: none;
+}
+
+.bar {
+    height: 10px;
+    background: #27344b;
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.fill {
+    height: 100%;
+    width: 50%;
+    background: #22c55e;
+    transition: width 0.4s;
+}
+
+button {
+    width: 100%;
+    border: none;
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 9px;
+    color: white;
+    font-size: 16px;
+    font-weight: 850;
+}
+
+.start {
+    background: #2563eb;
+}
+
+.boost {
+    background: #7c3aed;
+}
+
+.danger {
+    background: #b91c1c;
+}
+
+.neutral {
+    background: #334155;
+}
+
+.note {
+    font-size: 11px;
+    color: #94a3b8;
+    line-height: 1.45;
+    margin-top: 10px;
+}
+
+canvas {
+    width: 100%;
+    height: 150px;
+    background: #0f172a;
+    border-radius: 12px;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 99px;
+    background: #172e24;
+    color: #86efac;
+    font-size: 12px;
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div>
+
+        <h1>⚡ Éolienne</h1>
+
+        <div class="subtitle">
+            Surveillance & commande
+        </div>
+
+    </div>
+
+    <div class="online">
+        ● EN LIGNE
+    </div>
+
+</header>
+
+
+<div id="status" class="status">
+
+    🟡 SIMULATION EN PAUSE
+
+</div>
+
+
+
+<!-- ========================= -->
+<!-- MESURES -->
+<!-- ========================= -->
+
+<div class="grid">
+
+
+    <div class="card">
+
+        <div class="label">
+            🌬️ VENT
+        </div>
+
+        <div class="num">
+            <span id="wind">20.0</span>
+        </div>
+
+        <div class="unit">
+            km/h
+        </div>
+
+    </div>
+
+
+
+    <div class="card">
+
+        <div class="label">
+            🔄 ROTATION
+        </div>
+
+        <div class="num">
+            <span id="rpm">180</span>
+        </div>
+
+        <div class="unit">
+            tr/min
+        </div>
+
+    </div>
+
+
+
+    <div class="card">
+
+        <div class="label">
+            ⚡ TENSION
+        </div>
+
+        <div class="num">
+            <span id="volt">13.2</span>
+        </div>
+
+        <div class="unit">
+            V
+        </div>
+
+    </div>
+
+
+
+    <div class="card">
+
+        <div class="label">
+            🔌 COURANT
+        </div>
+
+        <div class="num">
+            <span id="amp">12.5</span>
+        </div>
+
+        <div class="unit">
+            A
+        </div>
+
+    </div>
+
+
+
+    <div class="card">
+
+        <div class="label">
+            🌡️ TEMPÉRATURE GÉNÉRATEUR
+        </div>
+
+        <div class="num">
+            <span id="temp">32.0</span>
+        </div>
+
+        <div class="unit">
+            °C
+        </div>
+
+    </div>
+
+
+
+    <div class="card wide">
+
+        <div class="label">
+            ⚡ PUISSANCE
+        </div>
+
+        <div class="num">
+
+            <span id="power">
+                165
+            </span>
+
+            W
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ========================= -->
+<!-- BATTERIES -->
+<!-- ========================= -->
+
+<div class="section">
+
+    <h2>
+        🔋 Batteries
+    </h2>
+
+    <div class="card">
+
+
+        <div class="row">
+
+            <span>
+                Batterie principale
+            </span>
+
+            <strong id="main">
+                13.20 V
+            </strong>
+
+        </div>
+
+
+        <div class="bar">
+
+            <div
+                id="bar"
+                class="fill">
+            </div>
+
+        </div>
+
+
+        <div class="row">
+
+            <span>
+                Batterie secours
+            </span>
+
+            <strong id="backup">
+                12.70 V
+            </strong>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================= -->
+<!-- SÉCURITÉ -->
+<!-- ========================= -->
+
+<div class="section">
+
+    <h2>
+        🛡️ Sécurité
+    </h2>
+
+
+    <div class="card">
+
+
+        <div class="row">
+
+            <span>
+                Frein
+            </span>
+
+            <strong id="brake">
+                🟢 LIBÉRÉ
+            </strong>
+
+        </div>
+
+
+        <div class="row">
+
+            <span>
+                Survitesse
+            </span>
+
+            <strong id="speed">
+                🟢 OK
+            </strong>
+
+        </div>
+
+
+        <div class="row">
+
+            <span>
+                Surchauffe
+            </span>
+
+            <strong id="thermal">
+                🟢 OK
+            </strong>
+
+        </div>
+
+
+        <div class="row">
+
+            <span>
+                Mode automatique
+            </span>
+
+            <strong>
+                🟢 ACTIF
+            </strong>
+
+        </div>
+
+
+        <div class="row">
+
+            <span>
+                Limite Boost
+            </span>
+
+            <strong>
+                600 W
+            </strong>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================= -->
+<!-- COMMANDES -->
+<!-- ========================= -->
+
+<div class="section">
+
+    <h2>
+        🕹️ Commandes
+    </h2>
+
+
+    <div class="card">
+
+
+        <button
+            id="start"
+            class="start">
+
+            ▶️ DÉMARRER
+
+        </button>
+
+
+        <button
+            id="boost"
+            class="boost">
+
+            🚀 BOOST : OFF
+
+        </button>
+
+
+        <button
+            id="stop"
+            class="danger">
+
+            🛑 FREIN D'URGENCE
+
+        </button>
+
+
+        <button
+            id="reset"
+            class="neutral">
+
+            🔄 RÉARMER
+
+        </button>
+
+
+        <div class="note">
+
+            ⚠️ Version de démonstration.
+            Le Boost simule une limite de puissance
+            de 600 W. Aucun matériel réel n'est commandé.
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================= -->
+<!-- GRAPHIQUE -->
+<!-- ========================= -->
+
+<div class="section">
+
+    <h2>
+        📈 Puissance
+    </h2>
+
+
+    <div class="card">
+
+        <canvas
+            id="chart"
+            width="680"
+            height="150">
+        </canvas>
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================= -->
+<!-- PRODUCTION -->
+<!-- ========================= -->
+
+<div class="section">
+
+    <h2>
+        📊 Production
+    </h2>
+
+
+    <div class="card">
+
+
+        <div class="row">
+
+            <span>
+                Énergie produite
+            </span>
+
+            <strong id="energy">
+                0.0000 kWh
+            </strong>
+
+        </div>
+
+
+        <div class="row">
+
+            <span>
+                Mode
+            </span>
+
+            <span class="badge">
+                SIMULATION
+            </span>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+/*
+==================================================
+VARIABLES
+==================================================
+*/
+
+let run = false;
+
+let brake = false;
+
+let boost = false;
+
+let t = 0;
+
+let wind = 20;
+
+let windTarget = 20;
+
+let rpm = 180;
+
+let mainBattery = 13.2;
+
+let backupBattery = 12.7;
+
+let temperature = 32;
+
+let energy = 0;
+
+let powerHistory = [];
+
+
+
+/*
+==================================================
+OUTILS
+==================================================
+*/
+
+function clamp(
+    value,
+    min,
+    max
+) {
+
+    return Math.max(
+        min,
+        Math.min(max, value)
+    );
+
+}
+
+
+
+/*
+==================================================
+DÉMARRER / PAUSE
+==================================================
+*/
+
+document
+.getElementById("start")
+.addEventListener(
+    "click",
+    function() {
+
+
+        run = !run;
+
+
+        if (run) {
+
+            document
+            .getElementById("start")
+            .textContent =
+                "⏸️ PAUSE";
+
+
+            document
+            .getElementById("status")
+            .textContent =
+                "🟢 SIMULATION EN COURS";
+
+        }
+
+        else {
+
+            document
+            .getElementById("start")
+            .textContent =
+                "▶️ DÉMARRER";
+
+
+            document
+            .getElementById("status")
+            .textContent =
+                "🟡 SIMULATION EN PAUSE";
+
+        }
+
+
+    }
+);
+
+
+
+/*
+==================================================
+BOOST
+==================================================
+*/
+
+document
+.getElementById("boost")
+.addEventListener(
+    "click",
+    function() {
+
+
+        if (!run) {
+
+            alert(
+                "Démarre d'abord la simulation."
+            );
+
+            return;
+
+        }
+
+
+        if (brake) {
+
+            alert(
+                "Impossible d'activer le Boost pendant le freinage."
+            );
+
+            return;
+
+        }
+
+
+        boost = !boost;
+
+
+        if (boost) {
+
+            document
+            .getElementById("boost")
+            .textContent =
+                "🚀 BOOST : ON";
+
+
+            document
+            .getElementById("boostState");
+
+
+            document
+            .getElementById("status")
+            .textContent =
+                "🟠 MODE BOOST — MAX 600 W";
+
+        }
+
+        else {
+
+            document
+            .getElementById("boost")
+            .textContent =
+                "🚀 BOOST : OFF";
+
+
+            document
+            .getElementById("status")
+            .textContent =
+                "🟢 SIMULATION EN COURS";
+
+        }
+
+
+    }
+);
+
+
+
+/*
+==================================================
+FREIN D'URGENCE
+==================================================
+*/
+
+document
+.getElementById("stop")
+.addEventListener(
+    "click",
+    function() {
+
+
+        if (!run) {
+
+            alert(
+                "Démarre d'abord la simulation."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            confirm(
+                "Activer le frein d'urgence dans la simulation ?"
+            )
+        ) {
+
+
+            brake = true;
+
+            boost = false;
+
+
+            document
+            .getElementById("boost")
+            .textContent =
+                "🚀 BOOST : OFF";
+
+
+            document
+            .getElementById("status")
+            .textContent =
+                "🔴 FREIN D'URGENCE ACTIVÉ";
+
+
+        }
+
+
+    }
+);
+
+
+
+/*
+==================================================
+RÉARMEMENT
+==================================================
+*/
+
+document
+.getElementById("reset")
+.addEventListener(
+    "click",
+    function() {
+
+
+        if (rpm > 5) {
+
+            alert(
+                "Réarmement impossible : le rotor tourne encore."
+            );
+
+            return;
+
+        }
+
+
+        brake = false;
+
+        boost = false;
+
+
+        document
+        .getElementById("boost")
+        .textContent =
+            "🚀 BOOST : OFF";
+
+
+        document
+        .getElementById("status")
+        .textContent =
+            "🟢 SYSTÈME PRÊT";
+
+
+    }
+);
+
+
+
+/*
+==================================================
+SIMULATION
+==================================================
+*/
+
+function updateSimulation() {
+
+
+    if (!run) {
+
+        return;
+
+    }
+
+
+    t += 0.2;
+
+
+
+    /*
+    ------------------------------
+    VENT
+    ------------------------------
+    */
+
+    if (
+        Math.random() < 0.08
+    ) {
+
+        windTarget =
+            8 +
+            Math.random() * 42;
+
+    }
+
+
+    let windVariation =
+        Math.sin(t * 0.4) * 2 +
+        Math.sin(t * 1.2) * 0.8;
+
+
+    let desiredWind =
+        windTarget +
+        windVariation +
+        (Math.random() - 0.5) * 1.5;
+
+
+    desiredWind =
+        clamp(
+            desiredWind,
+            5,
+            60
+        );
+
+
+    wind +=
+        (
+            desiredWind -
+            wind
+        ) * 0.10;
+
+
+
+    /*
+    ------------------------------
+    ROTATION
+    ------------------------------
+    */
+
+    if (!brake) {
+
+
+        let targetRPM =
+            wind * 9;
+
+
+        targetRPM =
+            clamp(
+                targetRPM,
+                30,
+                620
+            );
+
+
+        rpm +=
+            (
+                targetRPM -
+                rpm
+            ) * 0.15;
+
+
+    }
+
+    else {
+
+
+        rpm +=
+            (0 - rpm) *
+            0.22;
+
+
+        if (rpm < 1) {
+
+            rpm = 0;
+
+        }
+
+    }
+
+
+
+    /*
+    ------------------------------
+    GÉNÉRATEUR
+    ------------------------------
+    */
+
+    let voltage;
+
+
+    let current;
+
+
+    let power;
+
+
+
+    if (!brake) {
+
+
+        voltage =
+            clamp(
+                12 +
+                rpm * 0.009,
+                12,
+                15
+            );
+
+
+        current =
+            wind *
+            wind *
+            wind *
+            0.0007;
+
+
+        current +=
+            (
+                Math.random() - 0.5
+            ) * 0.5;
+
+
+        current =
+            clamp(
+                current,
+                0,
+                32
+            );
+
+
+        power =
+            voltage *
+            current;
+
+
+
+        /*
+        BOOST
+        */
+
+        if (boost) {
+
+            power =
+                power * 1.65;
+
+
+            power =
+                clamp(
+                    power,
+                    0,
+                    600
+                );
+
+        }
+
+
+    }
+
+    else {
+
+
+        voltage = 12;
+
+
+        current +=
+            0;
+
+
+        current = 0;
+
+
+        power = 0;
+
+    }
+
+
+
+    /*
+    ------------------------------
+    TEMPÉRATURE
+    ------------------------------
+    */
+
+    let targetTemperature;
+
+
+    targetTemperature =
+        28 +
+        power * 0.055 +
+        rpm * 0.012;
+
+
+    if (brake) {
+
+        targetTemperature = 28;
+
+    }
+
+
+    temperature +=
+        (
+            targetTemperature -
+            temperature
+        ) * 0.12;
+
+
+    temperature =
+        clamp(
+            temperature,
+            20,
+            120
+        );
+
+
+
+    /*
+    ------------------------------
+    BATTERIE PRINCIPALE
+    ------------------------------
+    */
+
+    if (!brake) {
+
+        mainBattery +=
+            power / 100000;
+
+    }
+
+
+    mainBattery -=
+        0.0004;
+
+
+    mainBattery =
+        clamp(
+            mainBattery,
+            11.8,
+            14.4
+        );
+
+
+
+    /*
+    ------------------------------
+    BATTERIE SECOURS
+    ------------------------------
+    */
+
+    backupBattery +=
+        0.00002;
+
+
+    backupBattery =
+        clamp(
+            backupBattery,
+            12,
+            13.4
+        );
+
+
+
+    /*
+    ------------------------------
+    ÉNERGIE
+    ------------------------------
+    */
+
+    energy +=
+        power /
+        3600000;
+
+
+
+    /*
+    ------------------------------
+    SURVITESSE
+    ------------------------------
+    */
+
+    if (
+        rpm >= 650 &&
+        !brake
+    ) {
+
+
+        brake = true;
+
+        boost = false;
+
+
+        document
+        .getElementById("boost")
+        .textContent =
+            "🚀 BOOST : OFF";
+
+
+        document
+        .getElementById("status")
+        .textContent =
+            "🚨 SURVITESSE — FREIN ACTIVÉ";
+
+    }
+
+
+
+    /*
+    ------------------------------
+    SURCHAUFFE
+    ------------------------------
+    */
+
+    if (
+        temperature >= 100 &&
+        !brake
+    ) {
+
+
+        brake = true;
+
+        boost = false;
+
+
+        document
+        .getElementById("boost")
+        .textContent =
+            "🚀 BOOST : OFF";
+
+
+        document
+        .getElementById("status")
+        .textContent =
+            "🌡️ SURCHAUFFE — FREIN ACTIVÉ";
+
+    }
+
+
+
+    /*
+    ------------------------------
+    HISTORIQUE
+    ------------------------------
+    */
+
+    powerHistory.push(
+        power
+    );
+
+
+    if (
+        powerHistory.length > 55
+    ) {
+
+        powerHistory.shift();
+
+    }
+
+
+
+    /*
+    ------------------------------
+    AFFICHAGE
+    ------------------------------
+    */
+
+    document
+    .getElementById("wind")
+    .textContent =
+        wind.toFixed(1);
+
+
+    document
+    .getElementById("rpm")
+    .textContent =
+        Math.round(rpm);
+
+
+    document
+    .getElementById("volt")
+    .textContent =
+        voltage.toFixed(1);
+
+
+    document
+    .getElementById("amp")
+    .textContent =
+        current.toFixed(1);
+
+
+    document
+    .getElementById("power")
+    .textContent =
+        Math.round(power);
+
+
+    document
+    .getElementById("temp")
+    .textContent =
+        temperature.toFixed(1);
+
+
+    document
+    .getElementById("main")
+    .textContent =
+        mainBattery.toFixed(2)
+        + " V";
+
+
+    document
+    .getElementById("backup")
+    .textContent =
+        backupBattery.toFixed(2)
+        + " V";
+
+
+    document
+    .getElementById("energy")
+    .textContent =
+        energy.toFixed(4)
+        + " kWh";
+
+
+
+    /*
+    ------------------------------
+    COULEUR TEMPÉRATURE
+    ------------------------------
+    */
+
+    if (
+        temperature >= 90
+    ) {
+
+        document
+        .getElementById("temp")
+        .style.color =
+            "#f87171";
+
+    }
+
+    else if (
+        temperature >= 75
+    ) {
+
+        document
+        .getElementById("temp")
+        .style.color =
+            "#fbbf24";
+
+    }
+
+    else {
+
+        document
+        .getElementById("temp")
+        .style.color =
+            "";
+
+    }
+
+
+
+    /*
+    ------------------------------
+    FREIN
+    ------------------------------
+    */
+
+    document
+    .getElementById("brake")
+    .textContent =
+        brake
+        ? "🔴 ACTIVÉ"
+        : "🟢 LIBÉRÉ";
+
+
+
+    /*
+    ------------------------------
+    SURVITESSE
+    ------------------------------
+    */
+
+    document
+    .getElementById("speed")
+    .textContent =
+        rpm >= 600
+        ? "🟠 SURVEILLANCE"
+        : "🟢 OK";
+
+
+
+    /*
+    ------------------------------
+    SURCHAUFFE
+    ------------------------------
+    */
+
+    document
+    .getElementById("thermal")
+    .textContent =
+        temperature >= 90
+        ? "🔴 ALERTE"
+        : "🟢 OK";
+
+
+
+    /*
+    ------------------------------
+    BATTERIE
+    ------------------------------
+    */
+
+    let batteryPercent =
+        (
+            (
+                mainBattery -
+                11.8
+            ) /
+            (
+                14.4 -
+                11.8
+            )
+        ) * 100;
+
+
+    batteryPercent =
+        clamp(
+            batteryPercent,
+            0,
+            100
+        );
+
+
+    document
+    .getElementById("bar")
+    .style.width =
+        batteryPercent + "%";
+
+
+
+    drawGraph();
+
+}
+
+
+
+/*
+==================================================
+GRAPHIQUE
+==================================================
+*/
+
+function drawGraph() {
+
+
+    const canvas =
+        document.getElementById(
+            "chart"
+        );
+
+
+    const ctx =
+        canvas.getContext(
+            "2d"
+        );
+
+
+    const width =
+        canvas.width;
+
+
+    const height =
+        canvas.height;
+
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+
+    /*
+    GRILLE
+    */
+
+    ctx.strokeStyle =
+        "#334155";
+
+
+    ctx.lineWidth = 1;
+
+
+    for (
+        let i = 1;
+        i < 5;
+        i++
+    ) {
+
+
+        let y =
+            i *
+            height /
+            5;
+
+
+        ctx.beginPath();
+
+
+        ctx.moveTo(
+            0,
+            y
+        );
+
+
+        ctx.lineTo(
+            width,
+            y
+        );
+
+
+        ctx.stroke();
+
+    }
+
+
+
+    if (
+        powerHistory.length < 2
+    ) {
+
+        return;
+
+    }
+
+
+
+    /*
+    MAXIMUM
+    */
+
+    let maxPower =
+        Math.max(
+            600,
+            ...powerHistory
+        );
+
+
+
+    /*
+    COURBE
+    */
+
+    ctx.strokeStyle =
+        "#60a5fa";
+
+
+    ctx.lineWidth = 3;
+
+
+    ctx.beginPath();
+
+
+
+    powerHistory.forEach(
+        function(
+            value,
+            index
+        ) {
+
+
+            let x =
+                5 +
+                index *
+                (
+                    width - 10
+                ) /
+                (
+                    powerHistory.length - 1
+                );
+
+
+            let y =
+                height -
+                8 -
+                (
+                    value /
+                    maxPower
+                ) *
+                (
+                    height - 16
+                );
+
+
+            if (
+                index === 0
+            ) {
+
+                ctx.moveTo(
+                    x,
+                    y
+                );
+
+            }
+
+            else {
+
+                ctx.lineTo(
+                    x,
+                    y
+                );
+
+            }
+
+        }
+    );
+
+
+    ctx.stroke();
+
+}
+
+
+
+/*
+==================================================
+INITIALISATION
+==================================================
+*/
+
+drawGraph();
+
+setInterval(
+    updateSimulation,
+    1000
+);
+
+</script>
+
+</body>
+</html>
