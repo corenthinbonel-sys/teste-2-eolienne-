@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Éolienne - Test</title>
+<title>Éolienne - Supervision</title>
 
 <style>
 *{box-sizing:border-box}
 
 body{
     margin:0;
-    background:#07111f;
-    color:#eef6ff;
-    font-family:Arial,sans-serif;
     padding:14px;
     max-width:950px;
     margin:auto;
+    background:#07111f;
+    color:#eef6ff;
+    font-family:Arial,sans-serif;
 }
 
 body.critical{
@@ -107,7 +107,6 @@ h1{margin:0}
 }
 
 .metric{
-    margin:0;
     min-height:110px;
 }
 
@@ -369,6 +368,10 @@ canvas{
         grid-template-columns:1fr;
     }
 
+    .grid{
+        grid-template-columns:1fr 1fr;
+    }
+
     .tests{
         grid-template-columns:1fr 1fr;
     }
@@ -379,17 +382,16 @@ canvas{
 <body>
 
 <h1>⚡ ÉOLIENNE</h1>
+
 <div class="sub">
-Surveillance & commande — version test
+Supervision & commande — simulation automatique
 </div>
 
 <br>
 
-<!-- FREIN D'URGENCE -->
-
 <button id="emergency" class="emergency">
 🛑 FREIN D'URGENCE
-<small>Appuyer pour déclencher</small>
+<small>Déclenchement manuel</small>
 </button>
 
 <div id="alert" class="alert"></div>
@@ -399,7 +401,7 @@ Surveillance & commande — version test
 </div>
 
 <div id="status" class="status">
-🟡 SYSTÈME EN PAUSE
+🟢 SIMULATION AUTOMATIQUE
 </div>
 
 
@@ -525,7 +527,7 @@ Surveillance & commande — version test
 <br>
 
 <div class="label">
-🔋 BATTERIE PRINCIPALE / STOCKAGE
+🔋 BATTERIE PRINCIPALE
 </div>
 
 <div class="value">
@@ -608,10 +610,6 @@ ORIENTATION ÉOLIENNE
 
 </div>
 
-<div class="note">
-🔵 Direction du vent • 🟢 orientation de l'éolienne
-</div>
-
 </div>
 
 
@@ -671,26 +669,22 @@ ORIENTATION ÉOLIENNE
 
 <div class="controls">
 
-<button id="start">
-▶️ DÉMARRER
-</button>
-
 <button id="ecoBtn" class="greenbtn">
 🌱 MODE ECO : OFF
 </button>
 
-</div>
-
 <button id="notify">
-🔔 ACTIVER LES NOTIFICATIONS
+🔔 ACTIVER NOTIFICATIONS
 </button>
+
+</div>
 
 <button id="manual">
 🛑 ARRÊT MANUEL
 </button>
 
 <button id="reset">
-🔄 RÉARMER
+🔄 RÉARMER LE SYSTÈME
 </button>
 
 </div>
@@ -759,17 +753,14 @@ height="150">
 <!-- TESTS -->
 
 <div class="section">
-🧪 Simulation des problèmes
+🧪 Simulation des défauts
 </div>
 
 <div class="card">
 
 <div class="note">
-
-Ces boutons servent uniquement à tester
-l'interface. Ils ne commandent aucun
-équipement réel.
-
+Ces boutons simulent des problèmes.
+Ils ne commandent aucun équipement réel.
 </div>
 
 <br>
@@ -817,7 +808,7 @@ l'interface. Ils ne commandent aucun
 </button>
 
 <button id="tRestart">
-🟢 Redémarrer
+🟢 Réinitialiser
 </button>
 
 <button id="tClear">
@@ -831,128 +822,154 @@ l'interface. Ils ne commandent aucun
 
 <script>
 
-let running=false;
+/* =====================================================
+   VARIABLES
+===================================================== */
 
-let braking=false;
+let running = true;
 
-let progressive=false;
+let braking = false;
 
-let brakeReason="";
+let progressive = false;
 
-let eco=false;
+let brakeReason = "";
 
-let manual=false;
+let eco = false;
 
-let connected=true;
+let manual = false;
+
+let connected = true;
+
+let strongProduction = false;
+
+let rpm = 0;
+
+let temp = 32;
+
+let bearing = 29;
+
+let humidity = 55;
+
+let wind = 20;
+
+let windTarget = 20;
+
+let windDeg = 215;
+
+let turbDeg = 125;
+
+let voltage = 12;
+
+let current = 0;
+
+let power = 0;
+
+let battery = 12.8;
+
+let secondary = 12.8;
+
+let energy = 0;
+
+let history = [];
+
+let lowWindSeen = false;
 
 
-let rpm=0;
+/* =====================================================
+   RACCOURCI DOM
+===================================================== */
 
-let temp=32;
-
-let bearing=29;
-
-let humidity=55;
-
-let wind=20;
-
-let windTarget=20;
-
-let windDeg=215;
-
-let turbDeg=125;
-
-let voltage=12;
-
-let current=0;
-
-let power=0;
-
-let battery=12.8;
-
-let secondary=12.8;
-
-let energy=0;
-
-let history=[];
-
-let lowWindSeen=false;
+const $ = id => document.getElementById(id);
 
 
-const $=x=>document.getElementById(x);
-
-
-/* JOURNAL */
+/* =====================================================
+   JOURNAL
+===================================================== */
 
 function log(msg){
 
-    let d=document.createElement("div");
+    const d = document.createElement("div");
 
-    d.className="entry";
+    d.className = "entry";
 
-    d.innerHTML=
-        "<b>"+
-        new Date().toLocaleTimeString("fr-FR")+
-        "</b> "+
+    d.innerHTML =
+        "<b>" +
+        new Date().toLocaleTimeString("fr-FR") +
+        "</b> " +
         msg;
 
     $("log").prepend(d);
-
 }
 
 
-/* VOYANTS */
+/* =====================================================
+   VOYANTS
+===================================================== */
 
 function dot(id,state){
 
-    $(id).className=
-        "dot "+
+    $(id).className =
+        "dot " +
         state;
-
 }
 
 
-/* MODE ECO */
+/* =====================================================
+   MODE ECO
+===================================================== */
 
 function setEco(value,message){
 
-    eco=value;
+    eco = value;
 
-    $("eco").classList.toggle("on",value);
+    $("eco").classList.toggle(
+        "on",
+        value
+    );
 
-    $("ecoBtn").textContent=
-        "🌱 MODE ECO : "+
-        (value?"ON":"OFF");
+    $("ecoBtn").textContent =
+        "🌱 MODE ECO : " +
+        (
+            value
+            ?
+            "ON"
+            :
+            "OFF"
+        );
 
     if(message){
 
-        $("status").textContent=message;
+        $("status").textContent =
+            message;
 
     }
-
 }
 
 
-/* ALERTE CRITIQUE */
+/* =====================================================
+   ALERTE CRITIQUE
+===================================================== */
 
 function critical(message){
 
-    $("alert").textContent=
-        "🚨 "+message;
+    $("alert").textContent =
+        "🚨 " + message;
 
     $("alert").classList.add("on");
 
-    document.body.classList.add("critical");
+    document.body.classList.add(
+        "critical"
+    );
 
     if(
         "Notification" in window &&
-        Notification.permission==="granted"
+        Notification.permission === "granted"
     ){
 
         new Notification(
             "🚨 Éolienne",
             {
-                body:message
+                body: message
             }
         );
 
@@ -967,40 +984,48 @@ function critical(message){
         ]);
 
     }
-
 }
 
 
-/* RETIRER ALERTE */
+/* =====================================================
+   EFFACER ALERTE
+===================================================== */
 
 function clearCritical(){
 
-    $("alert").classList.remove("on");
+    $("alert").classList.remove(
+        "on"
+    );
 
-    document.body.classList.remove("critical");
-
+    document.body.classList.remove(
+        "critical"
+    );
 }
 
 
-/* NOTIFICATIONS */
+/* =====================================================
+   NOTIFICATIONS
+===================================================== */
 
-$("notify").onclick=async()=>{
+$("notify").onclick = async () => {
 
-    if(!("Notification" in window)){
+    if(
+        !("Notification" in window)
+    ){
 
         alert(
-            "Notifications indisponibles."
+            "Les notifications ne sont pas disponibles."
         );
 
         return;
 
     }
 
-    let p=
+    const permission =
         await Notification.requestPermission();
 
-    $("notify").textContent=
-        p==="granted"
+    $("notify").textContent =
+        permission === "granted"
         ?
         "🔔 NOTIFICATIONS : ACTIVÉES"
         :
@@ -1009,60 +1034,144 @@ $("notify").onclick=async()=>{
 };
 
 
-/* DEMARRAGE */
+/* =====================================================
+   FREINAGE AUTOMATIQUE
+===================================================== */
 
-$("start").onclick=()=>{
+function brakeStart(
+    reason,
+    slow
+){
+
+    running = false;
+
+    braking = true;
+
+    progressive = slow;
+
+    brakeReason = reason;
+
+    strongProduction = false;
+
+    $("brakeState").textContent =
+        slow
+        ?
+        "🟡 FREINAGE PROGRESSIF"
+        :
+        "🔴 FREIN ACTIF";
+
+
+    /*
+    DELTA PLEINE :
+    arrêt progressif sans
+    clignotement rouge.
+    */
 
     if(
-        braking ||
-        manual ||
-        !connected
+        reason === "DELTA PLEINE"
     ){
 
-        alert(
-            "Réarme le système avant de démarrer."
-        );
+        clearCritical();
 
-        return;
+        $("status").textContent =
+            "🟡 ARRÊT PROGRESSIF — DELTA PLEINE";
+
+        log(
+            "🟡 DELTA pleine — arrêt progressif commencé à " +
+            Math.round(rpm) +
+            " tr/min"
+        );
 
     }
 
-    running=!running;
+    else{
 
-    $("start").textContent=
-        running
-        ?
-        "⏸️ PAUSE"
-        :
-        "▶️ DÉMARRER";
+        /*
+        TOUS LES DÉFAUTS CRITIQUES
+        déclenchent automatiquement
+        le freinage d'urgence.
+        */
 
-    $("status").textContent=
-        running
-        ?
-        (
-            eco
-            ?
-            "🌱 MODE ECO ACTIF"
-            :
-            "🟢 SIMULATION EN COURS"
+        critical(
+            "FREIN D'URGENCE AUTOMATIQUE — " +
+            reason
+        );
+
+        log(
+            "🔴 FREIN D'URGENCE AUTOMATIQUE — " +
+            reason +
+            " — rotor " +
+            Math.round(rpm) +
+            " tr/min"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   FREIN D'URGENCE MANUEL
+===================================================== */
+
+$("emergency").onclick = () => {
+
+    if(
+        confirm(
+            "Déclencher le frein d'urgence ?"
         )
+    ){
+
+        brakeStart(
+            "ARRÊT D'URGENCE MANUEL",
+            false
+        );
+
+    }
+
+};
+
+
+/* =====================================================
+   ARRÊT MANUEL
+===================================================== */
+
+$("manual").onclick = () => {
+
+    manual = !manual;
+
+    running = false;
+
+    $("manualState").textContent =
+        manual
+        ?
+        "🔴 ACTIVÉ"
         :
-        "🟡 SYSTÈME EN PAUSE";
+        "🟢 DÉSACTIVÉ";
+
+    $("status").textContent =
+        manual
+        ?
+        "🛑 ARRÊT MANUEL"
+        :
+        "🟢 ARRÊT MANUEL DÉSACTIVÉ";
 
     log(
-        running
+        manual
         ?
-        "🟢 Éolienne démarrée"
+        "🛑 Arrêt manuel activé"
         :
-        "⏸️ Éolienne en pause"
+        "🟢 Arrêt manuel désactivé"
     );
 
 };
 
 
-/* MODE ECO MANUEL */
+/* =====================================================
+   MODE ECO MANUEL
+===================================================== */
 
-$("ecoBtn").onclick=()=>{
+$("ecoBtn").onclick = () => {
 
     if(braking){
 
@@ -1082,144 +1191,23 @@ $("ecoBtn").onclick=()=>{
     log(
         eco
         ?
-        "🌱 Mode ECO activé"
+        "🌱 Mode ECO activé manuellement"
         :
-        "🌱 Mode ECO désactivé"
+        "🌱 Mode ECO désactivé manuellement"
     );
 
 };
 
 
-/* FREIN URGENCE */
+/* =====================================================
+   REARMEMENT
+===================================================== */
 
-$("emergency").onclick=()=>{
-
-    if(
-        confirm(
-            "Activer le frein d'urgence ?"
-        )
-    ){
-
-        brakeStart(
-            "ARRÊT D'URGENCE",
-            false
-        );
-
-    }
-
-};
-
-
-/* ARRÊT MANUEL */
-
-$("manual").onclick=()=>{
-
-    manual=!manual;
-
-    running=false;
-
-    $("manualState").textContent=
-        manual
-        ?
-        "🔴 ACTIVÉ"
-        :
-        "🟢 DÉSACTIVÉ";
-
-    $("status").textContent=
-        manual
-        ?
-        "🛑 ARRÊT MANUEL"
-        :
-        "🟢 ARRÊT MANUEL DÉSACTIVÉ";
-
-    log(
-        manual
-        ?
-        "🛑 Arrêt manuel activé"
-        :
-        "🟢 Arrêt manuel désactivé"
-    );
-
-};
-
-
-/* FREINAGE */
-
-function brakeStart(
-    reason,
-    slow
-){
-
-    running=false;
-
-    braking=true;
-
-    progressive=slow;
-
-    brakeReason=reason;
-
-    $("start").textContent=
-        "▶️ DÉMARRER";
-
-    $("brakeState").textContent=
-        slow
-        ?
-        "🟡 FREINAGE PROGRESSIF"
-        :
-        "🔴 FREIN ACTIF";
-
-
-    /*
-    DELTA pleine :
-    arrêt progressif,
-    sans clignotement rouge.
-    */
-
-    if(
-        reason==="DELTA PLEINE"
-    ){
-
-        clearCritical();
-
-        $("status").textContent=
-            "🟡 ARRÊT PROGRESSIF — DELTA PLEINE";
-
-        log(
-            "🟡 DELTA pleine — "+
-            "arrêt progressif commencé à "+
-            Math.round(rpm)+
-            " tr/min"
-        );
-
-    }
-
-    else{
-
-        critical(
-            "Éolienne arrêtée — "+
-            reason
-        );
-
-        log(
-            "🔴 Freinage — "+
-            reason+
-            " — rotor "+
-            Math.round(rpm)+
-            " tr/min"
-        );
-
-    }
-
-}
-
-
-/* REARMEMENT */
-
-$("reset").onclick=()=>{
+$("reset").onclick = () => {
 
     if(
         !confirm(
-            "Confirmer le réarmement ?"
+            "Confirmer le réarmement du système ?"
         )
     ){
 
@@ -1227,76 +1215,79 @@ $("reset").onclick=()=>{
 
     }
 
-    running=false;
+    running = true;
 
-    braking=false;
+    braking = false;
 
-    progressive=false;
+    progressive = false;
 
-    manual=false;
+    manual = false;
 
-    connected=true;
+    connected = true;
 
-    rpm=0;
+    strongProduction = false;
 
-    power=0;
+    rpm = 0;
 
-    current=0;
+    power = 0;
 
-    temp=32;
+    current = 0;
 
-    bearing=29;
+    temp = 32;
 
-    wind=20;
+    bearing = 29;
+
+    wind = 20;
+
+    windTarget = 20;
 
     setEco(false);
 
     clearCritical();
 
 
-    $("start").textContent=
-        "▶️ DÉMARRER";
+    $("status").textContent =
+        "🟢 SIMULATION AUTOMATIQUE";
 
-    $("brakeState").textContent=
+
+    $("brakeState").textContent =
         "🟢 LIBÉRÉ";
 
-    $("manualState").textContent=
+    $("manualState").textContent =
         "🟢 DÉSACTIVÉ";
 
-    $("connectionState").textContent=
+    $("connectionState").textContent =
         "🟢 CONNECTÉ";
 
-    $("speedState").textContent=
+    $("speedState").textContent =
         "🟢 OK";
 
-    $("tempState").textContent=
+    $("tempState").textContent =
         "🟢 OK";
 
-    $("bearingState").textContent=
+    $("bearingState").textContent =
         "🟢 OK";
 
 
     dot("rpmDot","green");
-
     dot("tempDot","green");
-
     dot("bearingDot","green");
-
     dot("powerDot","green");
-
     dot("batteryDot","green");
 
 
     log(
-        "🟢 Système réarmé"
+        "🟢 Système réarmé — simulation automatique"
     );
 
 };
 
 
-/* COMPTEUR ENERGIE */
+/* =====================================================
+   COMPTEUR ENERGIE
+===================================================== */
 
-$("zero").onclick=()=>{
+$("zero").onclick = () => {
 
     if(
         confirm(
@@ -1304,9 +1295,9 @@ $("zero").onclick=()=>{
         )
     ){
 
-        energy=0;
+        energy = 0;
 
-        $("energy").textContent=
+        $("energy").textContent =
             "0.0000";
 
         log(
@@ -1318,121 +1309,140 @@ $("zero").onclick=()=>{
 };
 
 
-/* TEST CRITIQUE */
+/* =====================================================
+   TEST DEFAUT CRITIQUE
+===================================================== */
 
 function testCritical(
     message,
     kind
 ){
 
-    running=false;
+    running = false;
 
-    braking=true;
+    braking = true;
 
-    progressive=false;
+    progressive = false;
+
+    strongProduction = false;
 
     critical(message);
 
+    $("brakeState").textContent =
+        "🔴 FREIN D'URGENCE";
+
     log(
-        "🔴 TEST — "+kind
+        "🔴 TEST — " +
+        kind +
+        " → frein d'urgence automatique"
     );
 
 }
 
 
-/* TEST ARRET */
+/* =====================================================
+   TEST ARRET URGENCE
+===================================================== */
 
-$("tEmergency").onclick=()=>{
+$("tEmergency").onclick = () => {
 
-    rpm=Math.max(
+    rpm = Math.max(
         rpm,
         300
     );
 
     testCritical(
-        "Frein d'urgence activé",
+        "FREIN D'URGENCE AUTOMATIQUE",
         "arrêt d'urgence"
     );
 
 };
 
 
-/* TEST SURVITESSE */
+/* =====================================================
+   TEST SURVITESSE
+===================================================== */
 
-$("tSpeed").onclick=()=>{
+$("tSpeed").onclick = () => {
 
-    rpm=720;
+    rpm = 720;
 
     dot(
         "rpmDot",
         "red"
     );
 
-    $("speedState").textContent=
+    $("speedState").textContent =
         "🔴 SURVITESSE";
 
     testCritical(
-        "Survitesse — 720 tr/min",
+        "SURVITESSE — 720 tr/min",
         "survitesse"
     );
 
 };
 
 
-/* TEST TEMPERATURE GENERATEUR */
+/* =====================================================
+   TEST SURCHAUFFE GENERATEUR
+===================================================== */
 
-$("tTemp").onclick=()=>{
+$("tTemp").onclick = () => {
 
-    temp=102;
+    temp = 102;
 
     dot(
         "tempDot",
         "red"
     );
 
-    $("tempState").textContent=
+    $("tempState").textContent =
         "🔴 ALERTE";
 
     testCritical(
-        "Surchauffe générateur — 102 °C",
+        "SURCHAUFFE GÉNÉRATEUR — 102 °C",
         "surchauffe générateur"
     );
 
 };
 
 
-/* TEST ROULEMENT */
+/* =====================================================
+   TEST SURCHAUFFE ROULEMENT
+===================================================== */
 
-$("tBearing").onclick=()=>{
+$("tBearing").onclick = () => {
 
-    bearing=87;
+    bearing = 87;
 
     dot(
         "bearingDot",
         "red"
     );
 
-    $("bearingState").textContent=
+    $("bearingState").textContent =
         "🔴 ALERTE";
 
     testCritical(
-        "Surchauffe roulement — 87 °C",
+        "SURCHAUFFE ROULEMENT — 87 °C",
         "surchauffe roulement"
     );
 
 };
 
 
-/* DELTA PLEINE */
+/* =====================================================
+   TEST DELTA PLEINE
+===================================================== */
 
-$("tDelta").onclick=()=>{
+$("tDelta").onclick = () => {
 
-    rpm=Math.max(
+    rpm = Math.max(
         rpm,
         500
     );
 
-    power=400;
+    power = 400;
 
     brakeStart(
         "DELTA PLEINE",
@@ -1442,13 +1452,15 @@ $("tDelta").onclick=()=>{
 };
 
 
-/* VENT FAIBLE */
+/* =====================================================
+   TEST VENT FAIBLE
+===================================================== */
 
-$("tWind").onclick=()=>{
+$("tWind").onclick = () => {
 
-    wind=2;
+    wind = 2;
 
-    windTarget=2;
+    windTarget = 2;
 
     setEco(
         true,
@@ -1461,97 +1473,112 @@ $("tWind").onclick=()=>{
     );
 
     log(
-        "🟡 Vent faible — "+
-        "MODE ECO activé, "+
-        "éolienne maintenue en fonctionnement"
+        "🟡 Vent faible — éolienne maintenue en fonctionnement"
     );
 
 };
 
 
-/* MAUVAISE ORIENTATION */
+/* =====================================================
+   TEST MAUVAISE ORIENTATION
+===================================================== */
 
-$("tOrientation").onclick=()=>{
+$("tOrientation").onclick = () => {
 
-    windDeg=270;
+    windDeg = 270;
 
-    turbDeg=150;
+    turbDeg = 150;
 
-    $("orientationState").textContent=
+    $("orientationState").textContent =
         "🟡 CORRECTION";
 
-    $("status").textContent=
+    $("status").textContent =
         "🧭 CORRECTION D'ORIENTATION";
 
     log(
-        "🟡 Mauvaise orientation — correction en cours"
+        "🟡 Mauvaise orientation — correction automatique"
     );
 
 };
 
 
-/* PERTE ESP32 */
+/* =====================================================
+   TEST PERTE ESP32
+===================================================== */
 
-$("tConnection").onclick=()=>{
+$("tConnection").onclick = () => {
 
-    connected=false;
+    connected = false;
 
-    running=false;
+    running = false;
 
-    $("connectionState").textContent=
+    $("connectionState").textContent =
         "🔴 DÉCONNECTÉ";
 
-    critical(
-        "Communication avec l'ESP32 perdue"
-    );
+    /*
+    Perte communication =
+    défaut critique =
+    freinage d'urgence.
+    */
 
-    log(
-        "🔴 Perte de communication ESP32"
+    brakeStart(
+        "PERTE COMMUNICATION ESP32",
+        false
     );
 
 };
 
 
-/* FORTE PRODUCTION */
+/* =====================================================
+   FORTE PRODUCTION
+===================================================== */
 
-$("tPower").onclick=()=>{
+$("tPower").onclick = () => {
 
-    running=true;
+    running = true;
 
-    power=580;
+    braking = false;
 
-    rpm=620;
+    strongProduction = true;
 
-    current=45;
+    rpm = 620;
+
+    power = 580;
+
+    current = 45;
+
+    clearCritical();
 
     dot(
         "powerDot",
         "yellow"
     );
 
-    $("status").textContent=
-        "⚡ FORTE PRODUCTION";
+    $("status").textContent =
+        "🟡 FORTE PRODUCTION — RALENTISSEMENT PROGRESSIF";
 
     log(
-        "🟡 Forte production — 580 W"
+        "🟡 Forte production — ralentissement progressif"
     );
 
 };
 
 
-/* BATTERIE FAIBLE */
+/* =====================================================
+   TEST BATTERIE FAIBLE
+===================================================== */
 
-$("tBattery").onclick=()=>{
+$("tBattery").onclick = () => {
 
-    battery=11.75;
+    battery = 11.75;
 
     dot(
         "batteryDot",
         "yellow"
     );
 
-    $("status").textContent=
-        "🔋 BATTERIE SECOURS FAIBLE";
+    $("status").textContent =
+        "🟡 BATTERIE SECOURS FAIBLE";
 
     log(
         "🟡 Batterie secours faible — 11,75 V"
@@ -1560,27 +1587,24 @@ $("tBattery").onclick=()=>{
 };
 
 
-/* REDEMARRAGE */
+/* =====================================================
+   REINITIALISATION TEST
+===================================================== */
 
-$("tRestart").onclick=()=>{
+$("tRestart").onclick = () => {
 
     $("reset").click();
-
-    setTimeout(
-        ()=>{
-            $("start").click();
-        },
-        50
-    );
 
 };
 
 
-/* JOURNAL */
+/* =====================================================
+   JOURNAL
+===================================================== */
 
 function clearLog(){
 
-    $("log").innerHTML="";
+    $("log").innerHTML = "";
 
     log(
         "🧹 Journal effacé"
@@ -1588,18 +1612,20 @@ function clearLog(){
 
 }
 
-$("clear").onclick=clearLog;
+$("clear").onclick = clearLog;
 
-$("tClear").onclick=clearLog;
+$("tClear").onclick = clearLog;
 
 
-/* GRAPHIQUE */
+/* =====================================================
+   GRAPHIQUE
+===================================================== */
 
 function draw(){
 
-    let c=$("chart");
+    const c = $("chart");
 
-    let ctx=c.getContext("2d");
+    const ctx = c.getContext("2d");
 
     ctx.clearRect(
         0,
@@ -1609,14 +1635,14 @@ function draw(){
     );
 
     if(
-        history.length<2
+        history.length < 2
     ){
 
         return;
 
     }
 
-    let max=
+    const max =
         Math.max(
             600,
             ...history
@@ -1624,22 +1650,30 @@ function draw(){
 
     ctx.beginPath();
 
-    ctx.lineWidth=3;
+    ctx.lineWidth = 3;
 
     history.forEach(
-        (v,i)=>{
+        (v,i) => {
 
-            let x=
-                5+
-                i*
-                (c.width-10)/
-                (history.length-1);
+            const x =
+                5 +
+                i *
+                (
+                    c.width - 10
+                ) /
+                (
+                    history.length - 1
+                );
 
-            let y=
-                c.height-
-                8-
-                v/max*
-                (c.height-16);
+            const y =
+                c.height -
+                8 -
+                (
+                    v / max
+                ) *
+                (
+                    c.height - 16
+                );
 
             if(i){
 
@@ -1649,7 +1683,6 @@ function draw(){
                 );
 
             }
-
             else{
 
                 ctx.moveTo(
@@ -1667,16 +1700,16 @@ function draw(){
 }
 
 
-/* BOUCLE PRINCIPALE */
+/* =====================================================
+   BOUCLE PRINCIPALE
+===================================================== */
 
 function update(){
 
     /*
+    ====================================================
     FREINAGE PROGRESSIF
-
-    La vitesse du rotor continue
-    d'être affichée pendant toute
-    la phase de freinage.
+    ====================================================
     */
 
     if(
@@ -1684,84 +1717,82 @@ function update(){
         progressive
     ){
 
-        rpm=Math.max(
-            0,
-            rpm-
-            (
-                brakeReason===
-                "DELTA PLEINE"
-                ?
+        /*
+        La vitesse du rotor reste affichée
+        pendant toute la phase de freinage.
+        */
+
+        rpm =
+            Math.max(
+                0,
+                rpm -
                 Math.max(
-                    12,
-                    rpm*.07
+                    8,
+                    rpm * 0.055
                 )
-                :
-                Math.max(
-                    30,
-                    rpm*.15
-                )
-            )
-        );
+            );
 
 
-        power=Math.max(
-            0,
-            power-25
-        );
-
-        current=Math.max(
-            0,
-            current-2
-        );
+        power =
+            Math.max(
+                0,
+                power - 20
+            );
 
 
-        $("rpm").textContent=
+        current =
+            Math.max(
+                0,
+                current - 1.5
+            );
+
+
+        $("rpm").textContent =
             Math.round(rpm);
 
-        $("power").textContent=
+
+        $("power").textContent =
             Math.round(power);
 
-        $("current").textContent=
+
+        $("current").textContent =
             current.toFixed(1);
 
 
-        /*
-        Affichage de chaque étape
-        du ralentissement.
-        */
+        if(
+            brakeReason ===
+            "DELTA PLEINE"
+        ){
 
-        log(
-            "🌀 Freinage — rotor "+
-            Math.round(rpm)+
-            " tr/min"
-        );
+            $("status").textContent =
+                "🟡 ARRÊT PROGRESSIF — DELTA PLEINE";
+
+        }
 
 
         if(
-            rpm<=1
+            rpm <= 1
         ){
 
-            rpm=0;
+            rpm = 0;
 
-            power=0;
+            power = 0;
 
-            current=0;
+            current = 0;
 
-            braking=true;
+            braking = true;
 
-            progressive=false;
+            progressive = false;
 
-
-            $("brakeState").textContent=
+            $("brakeState").textContent =
                 "🛑 ARRÊTÉ";
 
-            $("status").textContent=
-                "🟢 ÉOLIENNE ARRÊTÉE — "+
+            $("status").textContent =
+                "🟢 ÉOLIENNE ARRÊTÉE — " +
                 brakeReason;
 
-
             log(
-                "🟢 Rotor arrêté — "+
+                "🟢 Rotor arrêté — " +
                 brakeReason
             );
 
@@ -1771,7 +1802,7 @@ function update(){
         history.push(power);
 
         if(
-            history.length>70
+            history.length > 70
         ){
 
             history.shift();
@@ -1786,13 +1817,94 @@ function update(){
 
 
     /*
-    Si l'éolienne n'est pas en marche,
-    aucune simulation.
+    ====================================================
+    FREIN D'URGENCE
+    ====================================================
+    */
+
+    if(
+        braking &&
+        !progressive
+    ){
+
+        /*
+        Même lorsque le frein d'urgence
+        est actif, le régime reste visible.
+        */
+
+        rpm =
+            Math.max(
+                0,
+                rpm - Math.max(
+                    35,
+                    rpm * 0.22
+                )
+            );
+
+        power =
+            Math.max(
+                0,
+                power - 80
+            );
+
+        current =
+            Math.max(
+                0,
+                current - 5
+            );
+
+
+        $("rpm").textContent =
+            Math.round(rpm);
+
+        $("power").textContent =
+            Math.round(power);
+
+        $("current").textContent =
+            current.toFixed(1);
+
+
+        if(
+            rpm <= 1
+        ){
+
+            rpm = 0;
+
+            power = 0;
+
+            current = 0;
+
+            $("brakeState").textContent =
+                "🛑 ARRÊTÉ";
+
+        }
+
+
+        history.push(power);
+
+        if(
+            history.length > 70
+        ){
+
+            history.shift();
+
+        }
+
+        draw();
+
+        return;
+
+    }
+
+
+    /*
+    ====================================================
+    CONDITIONS DE FONCTIONNEMENT
+    ====================================================
     */
 
     if(
         !running ||
-        braking ||
         manual ||
         !connected
     ){
@@ -1803,85 +1915,94 @@ function update(){
 
 
     /*
-    Simulation du vent.
+    ====================================================
+    SIMULATION DU VENT
+    ====================================================
     */
 
     if(
-        Math.random()<0.08
+        Math.random() < 0.08
     ){
 
-        windTarget=
-            5+
-            Math.random()*45;
+        windTarget =
+            3 +
+            Math.random() * 42;
 
     }
 
 
-    wind+=
+    wind +=
         (
-            windTarget-
+            windTarget -
             wind
-        )*.08;
-
-
-    windDeg=
-        (
-            windDeg+
-            (
-                Math.random()-
-                .5
-            )*3+
-            360
-        )%360;
+        ) * 0.08;
 
 
     /*
-    Orientation automatique
-    vers le vent.
+    ====================================================
+    DIRECTION DU VENT
+    ====================================================
     */
 
-    let diff=
+    windDeg =
+        (
+            windDeg +
+            (
+                Math.random() - .5
+            ) * 3 +
+            360
+        ) % 360;
+
+
+    /*
+    ====================================================
+    ORIENTATION AUTOMATIQUE
+    ====================================================
+    */
+
+    let diff =
         Math.abs(
             (
-                windDeg-
-                turbDeg+
+                windDeg -
+                turbDeg +
                 540
-            )%360-
+            ) % 360 -
             180
         );
 
 
     if(
-        diff>15
+        diff > 15
     ){
 
-        turbDeg=
+        turbDeg =
             (
-                turbDeg+
+                turbDeg +
                 (
                     (
-                        windDeg-
-                        turbDeg+
+                        windDeg -
+                        turbDeg +
                         540
-                    )%360-
+                    ) % 360 -
                     180
-                )*.03+
+                ) * .03 +
                 360
-            )%360;
+            ) % 360;
 
     }
 
 
     /*
-    VENT FAIBLE
+    ====================================================
+    MODE ECO
 
-    IMPORTANT :
-    l'éolienne ne s'arrête pas.
-    Elle passe en MODE ECO.
+    < 7 km/h  → ECO
+    >=15 km/h → ECO OFF
+    ====================================================
     */
 
     if(
-        wind<7 &&
+        wind < 7 &&
         !eco
     ){
 
@@ -1896,28 +2017,22 @@ function update(){
         );
 
         log(
-            "🟡 Vent faible — "+
-            "MODE ECO activé"
+            "🟡 Vent < 7 km/h — MODE ECO activé"
         );
 
-        lowWindSeen=true;
+        lowWindSeen = true;
 
     }
 
 
-    /*
-    Retour du vent.
-    */
-
     if(
-        wind>=10 &&
-        eco &&
-        lowWindSeen
+        wind >= 15 &&
+        eco
     ){
 
         setEco(
             false,
-            "🟢 VENT NORMAL — MODE ECO DÉSACTIVÉ"
+            "🟢 VENT >= 15 km/h — MODE ECO DÉSACTIVÉ"
         );
 
         dot(
@@ -1926,159 +2041,240 @@ function update(){
         );
 
         log(
-            "🟢 Vent normal — "+
-            "MODE ECO désactivé"
+            "🟢 Vent >= 15 km/h — MODE ECO désactivé"
         );
 
-        lowWindSeen=false;
+        lowWindSeen = false;
 
     }
 
 
     /*
-    CALCUL ROTOR
+    ====================================================
+    CALCUL DU ROTOR
+    ====================================================
     */
 
-    rpm+=
-        (
-            Math.min(
-                680,
-                Math.max(
-                    25,
-                    wind*9
-                )
-            )-
-            rpm
-        )*.12;
+    let targetRPM =
+        Math.min(
+            680,
+            Math.max(
+                25,
+                wind * 9
+            )
+        );
 
 
     /*
-    GENERATION ELECTRIQUE
+    ECO :
+    régime légèrement limité.
     */
 
-    voltage=
+    if(eco){
+
+        targetRPM *= .75;
+
+    }
+
+
+    rpm +=
+        (
+            targetRPM -
+            rpm
+        ) * .12;
+
+
+    /*
+    ====================================================
+    GENERATION
+    ====================================================
+    */
+
+    voltage =
         Math.min(
             15,
-            12+
-            rpm*.0085
+            12 +
+            rpm * .0085
         );
 
 
-    current=
+    current =
         Math.max(
             0,
-            wind*
-            wind*
-            wind*
-            .0007+
+            wind *
+            wind *
+            wind *
+            .0007 +
             (
-                Math.random()-
+                Math.random() -
                 .5
-            )*.3
+            ) * .3
         );
 
 
-    power=
+    power =
         Math.max(
             0,
-            voltage*current
+            voltage *
+            current
         );
 
 
     /*
-    MODE ECO :
+    ECO :
     puissance limitée.
     */
 
     if(eco){
 
-        power*=.75;
+        power *= .75;
 
     }
 
 
     /*
-    TEMPERATURES
+    ====================================================
+    FORTE PRODUCTION
+
+    >= 500 W :
+    le rotor ralentit progressivement.
+
+    PAS d'arrêt complet.
+    ====================================================
     */
 
-    temp+=
+    if(
+        power >= 500 ||
+        strongProduction
+    ){
+
+        strongProduction = true;
+
+        dot(
+            "powerDot",
+            "yellow"
+        );
+
+        $("status").textContent =
+            "🟡 FORTE PRODUCTION — RALENTISSEMENT";
+
+
+        /*
+        Ralentissement progressif.
+        */
+
+        rpm =
+            Math.max(
+                250,
+                rpm - 10
+            );
+
+
+        /*
+        Réduction progressive
+        de la puissance.
+        */
+
+        power *= .90;
+
+
+        current =
+            power /
+            Math.max(
+                voltage,
+                1
+            );
+
+    }
+
+
+    /*
+    ====================================================
+    TEMPERATURES
+    ====================================================
+    */
+
+    temp +=
         (
-            28+
-            power*.045+
-            rpm*.008-
+            28 +
+            power * .045 +
+            rpm * .008 -
             temp
-        )*.06;
+        ) * .06;
 
 
-    bearing+=
+    bearing +=
         (
-            27+
-            power*.018+
-            rpm*.004-
+            27 +
+            power * .018 +
+            rpm * .004 -
             bearing
-        )*.06;
+        ) * .06;
 
 
-    humidity=
+    humidity =
         Math.max(
             30,
             Math.min(
                 85,
-                humidity+
+                humidity +
                 (
-                    Math.random()-
+                    Math.random() -
                     .5
-                )*.3
+                ) * .3
             )
         );
 
 
     /*
+    ====================================================
     BATTERIES
+    ====================================================
     */
 
-    battery=
+    battery =
         Math.min(
             14.4,
             Math.max(
                 11.8,
-                battery+
-                power/180000-
+                battery +
+                power / 180000 -
                 .00025
             )
         );
 
 
-    secondary=
+    secondary =
         Math.min(
             14.4,
             Math.max(
                 11.8,
-                secondary+
-                power/260000-
+                secondary +
+                power / 260000 -
                 .00018
             )
         );
 
 
     /*
-    COMPTEUR D'ENERGIE
+    ====================================================
+    ENERGIE
+    ====================================================
     */
 
-    energy+=
-        power/
+    energy +=
+        power /
         3600000;
 
 
     /*
-    DEFAUTS CRITIQUES
-
-    Ceux-ci font clignoter
-    l'application en rouge.
+    ====================================================
+    DEFAUTS CRITIQUES AUTOMATIQUES
+    ====================================================
     */
 
     if(
-        rpm>=650
+        rpm >= 650
     ){
 
         dot(
@@ -2086,12 +2282,13 @@ function update(){
             "red"
         );
 
-        $("speedState").textContent=
+        $("speedState").textContent =
             "🔴 SURVITESSE";
+
 
         brakeStart(
             "SURVITESSE",
-            true
+            false
         );
 
         return;
@@ -2100,7 +2297,7 @@ function update(){
 
 
     if(
-        temp>=100
+        temp >= 100
     ){
 
         dot(
@@ -2108,12 +2305,13 @@ function update(){
             "red"
         );
 
-        $("tempState").textContent=
+        $("tempState").textContent =
             "🔴 ALERTE";
+
 
         brakeStart(
             "SURCHAUFFE GÉNÉRATEUR",
-            true
+            false
         );
 
         return;
@@ -2122,7 +2320,7 @@ function update(){
 
 
     if(
-        bearing>=85
+        bearing >= 85
     ){
 
         dot(
@@ -2130,12 +2328,13 @@ function update(){
             "red"
         );
 
-        $("bearingState").textContent=
+        $("bearingState").textContent =
             "🔴 ALERTE";
+
 
         brakeStart(
             "SURCHAUFFE ROULEMENT",
-            true
+            false
         );
 
         return;
@@ -2144,176 +2343,212 @@ function update(){
 
 
     /*
+    ====================================================
     ALERTES JAUNES
-
-    IMPORTANT :
-    aucune animation rouge.
+    Pas de clignotement.
+    ====================================================
     */
 
     dot(
         "rpmDot",
-        rpm>=600
-        ?"yellow"
-        :"green"
+        rpm >= 600
+        ?
+        "yellow"
+        :
+        "green"
     );
 
 
     dot(
         "tempDot",
-        temp>=75
-        ?"yellow"
-        :"green"
+        temp >= 75
+        ?
+        "yellow"
+        :
+        "green"
     );
 
 
     dot(
         "bearingDot",
-        bearing>=60
-        ?"yellow"
-        :"green"
+        bearing >= 60
+        ?
+        "yellow"
+        :
+        "green"
     );
 
 
     dot(
         "powerDot",
-        power>=500
-        ?"yellow"
-        :"green"
+        power >= 500
+        ?
+        "yellow"
+        :
+        "green"
     );
 
 
     dot(
         "batteryDot",
-        battery<=12
-        ?"yellow"
-        :"green"
+        battery <= 12
+        ?
+        "yellow"
+        :
+        "green"
     );
 
 
     /*
+    ====================================================
     AFFICHAGE
+    ====================================================
     */
 
-    $("rpm").textContent=
+    $("rpm").textContent =
         Math.round(rpm);
 
-    $("temp").textContent=
+    $("temp").textContent =
         temp.toFixed(1);
 
-    $("bearing").textContent=
+    $("bearing").textContent =
         bearing.toFixed(1);
 
-    $("humidity").textContent=
+    $("humidity").textContent =
         Math.round(humidity);
 
-    $("voltage").textContent=
+    $("voltage").textContent =
         voltage.toFixed(1);
 
-    $("current").textContent=
+    $("current").textContent =
         current.toFixed(1);
 
-    $("power").textContent=
+    $("power").textContent =
         Math.round(power);
 
-    $("battery").textContent=
+    $("battery").textContent =
         battery.toFixed(2);
 
-    $("secondary").textContent=
+    $("secondary").textContent =
         secondary.toFixed(2);
 
-    $("energy").textContent=
+    $("energy").textContent =
         energy.toFixed(4);
 
 
-    $("wind").textContent=
+    $("wind").textContent =
         wind.toFixed(1);
 
-    $("windms").textContent=
+    $("windms").textContent =
         (
-            wind/3.6
+            wind / 3.6
         ).toFixed(1);
 
 
-    $("windDeg").textContent=
-        Math.round(
-            windDeg
-        )+
+    $("windDeg").textContent =
+        Math.round(windDeg) +
         "°";
 
 
-    $("turbDeg").textContent=
-        Math.round(
-            turbDeg
-        );
+    $("turbDeg").textContent =
+        Math.round(turbDeg);
 
 
     /*
-    ETAT ORIENTATION
+    ====================================================
+    ORIENTATION
+    ====================================================
     */
 
-    $("orientationState").textContent=
-        diff<=15
+    diff =
+        Math.abs(
+            (
+                windDeg -
+                turbDeg +
+                540
+            ) % 360 -
+            180
+        );
+
+
+    $("orientationState").textContent =
+        diff <= 15
         ?
         "🟢 FACE AU VENT"
         :
-        diff<=30
+        diff <= 30
         ?
         "🟡 CORRECTION"
         :
-        "🟠 MAUVAISE ORIENTATION";
+        "🟡 MAUVAISE ORIENTATION";
 
 
-    $("connectionState").textContent=
+    $("connectionState").textContent =
         "🟢 CONNECTÉ";
 
 
     /*
+    ====================================================
     BARRES BATTERIES
+    ====================================================
     */
 
-    $("batteryFill").style.width=
-        (
-            (
-                battery-
-                11.8
-            )/
-            2.6*
-            100
-        )+
+    $("batteryFill").style.width =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                (
+                    (
+                        battery -
+                        11.8
+                    ) /
+                    2.6
+                ) * 100
+            )
+        ) +
         "%";
 
 
-    $("secondaryFill").style.width=
-        (
-            (
-                secondary-
-                11.8
-            )/
-            2.6*
-            100
-        )+
+    $("secondaryFill").style.width =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                (
+                    (
+                        secondary -
+                        11.8
+                    ) /
+                    2.6
+                ) * 100
+            )
+        ) +
         "%";
 
 
     /*
+    ====================================================
     BOUSSOLE
+    ====================================================
     */
 
     $("arrow").style.setProperty(
         "--wind",
-        windDeg+
-        "deg"
+        windDeg + "deg"
     );
 
 
     /*
-    COURBE PUISSANCE
+    ====================================================
+    GRAPHIQUE
+    ====================================================
     */
 
     history.push(power);
 
     if(
-        history.length>70
+        history.length > 70
     ){
 
         history.shift();
@@ -2325,13 +2560,23 @@ function update(){
 }
 
 
-/*
-DEMARRAGE
-*/
+/* =====================================================
+   DEMARRAGE AUTOMATIQUE
+===================================================== */
 
 log(
     "🟢 Système prêt"
 );
+
+log(
+    "▶️ Simulation démarrée automatiquement"
+);
+
+
+/*
+La simulation tourne en permanence.
+Aucun bouton DÉMARRER nécessaire.
+*/
 
 setInterval(
     update,
