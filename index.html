@@ -2,25 +2,23 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#07111f">
-<title>Éolienne — Commande & Surveillance</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Éolienne - Test</title>
 
 <style>
 *{box-sizing:border-box}
 
 body{
     margin:0;
+    background:#07111f;
+    color:#eef6ff;
+    font-family:Arial,sans-serif;
     padding:14px;
     max-width:950px;
     margin:auto;
-    background:#07111f;
-    color:#eef6ff;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-    transition:.25s;
 }
 
-body.alert{
+body.critical{
     background:#430707;
     animation:flash .65s infinite;
 }
@@ -29,50 +27,31 @@ body.alert{
     50%{background:#120505}
 }
 
-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:12px;
-}
-
-h1{
-    margin:0;
-    font-size:25px;
-}
+h1{margin:0}
 
 .sub{
-    color:#8fa4b9;
+    color:#8da0b4;
     font-size:12px;
-    margin-top:3px;
-}
-
-.online{
-    color:#43e36d;
-    font-size:12px;
-    font-weight:800;
 }
 
 .card{
     background:#0d1a2a;
     border:1px solid #20334b;
-    border-radius:17px;
+    border-radius:16px;
     padding:14px;
-    margin-bottom:10px;
+    margin:10px 0;
 }
 
 .emergency{
     width:100%;
-    min-height:90px;
-    border:2px solid #ff4242;
+    height:90px;
+    border:2px solid #ff4444;
     border-radius:18px;
     background:#8d1111;
     color:white;
     font-size:20px;
-    font-weight:900;
+    font-weight:bold;
     cursor:pointer;
-    box-shadow:0 0 20px #ff222244;
-    margin-bottom:10px;
 }
 
 .emergency small{
@@ -81,30 +60,44 @@ h1{
     margin-top:5px;
 }
 
-.alertbox{
-    display:none;
-    background:#a91515;
-    border:2px solid #ff5555;
-    border-radius:14px;
-    padding:13px;
-    text-align:center;
-    font-weight:900;
-    margin-bottom:10px;
-}
-
-.alertbox.on{
-    display:block;
-    animation:flash .65s infinite;
-}
-
 .status{
     text-align:center;
     padding:12px;
-    border-radius:14px;
+    border-radius:13px;
     background:#073b29;
     color:#7df3a5;
-    font-weight:800;
-    margin-bottom:10px;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+.eco{
+    display:none;
+    background:#176b3b;
+    border:1px solid #42e36e;
+    border-radius:13px;
+    padding:11px;
+    text-align:center;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+.eco.on{
+    display:block;
+}
+
+.alert{
+    display:none;
+    background:#a91515;
+    border-radius:13px;
+    padding:12px;
+    text-align:center;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+.alert.on{
+    display:block;
+    animation:flash .65s infinite;
 }
 
 .grid{
@@ -114,73 +107,88 @@ h1{
 }
 
 .metric{
-    min-height:105px;
     margin:0;
+    min-height:110px;
 }
 
 .label{
-    color:#8fa4b9;
     font-size:12px;
+    color:#8da0b4;
 }
 
 .value{
-    font-size:27px;
+    font-size:26px;
     font-weight:900;
-    margin-top:5px;
+    margin-top:6px;
 }
 
-.unit{
-    color:#8fa4b9;
-    font-size:12px;
+.dot{
+    width:13px;
+    height:13px;
+    border-radius:50%;
+    display:inline-block;
 }
 
-.section-title{
-    font-size:17px;
-    font-weight:900;
-    margin:18px 2px 9px;
+.green{
+    background:#39df69;
+    box-shadow:0 0 8px #39df69;
+}
+
+.yellow{
+    background:#ffd43b;
+    box-shadow:0 0 8px #ffd43b;
+}
+
+.red{
+    background:#ff4242;
+    box-shadow:0 0 8px #ff4242;
+}
+
+.head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.progress{
+    height:9px;
+    background:#1b2a3e;
+    border-radius:20px;
+    margin-top:8px;
+}
+
+.fill{
+    height:100%;
+    width:50%;
+    background:#39df69;
+    border-radius:20px;
 }
 
 .row{
     display:flex;
     justify-content:space-between;
-    gap:10px;
     padding:10px 0;
     border-bottom:1px solid #20334b;
 }
 
 .row:last-child{
-    border-bottom:0;
+    border:0;
 }
 
 button{
     width:100%;
     border:0;
-    border-radius:14px;
+    border-radius:13px;
     padding:13px;
     margin-top:8px;
     color:white;
     background:#26384f;
-    font-size:14px;
-    font-weight:850;
+    font-weight:bold;
     cursor:pointer;
 }
 
 button:active{
     transform:scale(.98);
-}
-
-.controls{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-}
-
-.controls button{
-    margin:0;
-}
-
-.eco{
-    background:#176b3b;
 }
 
 .danger{
@@ -191,65 +199,77 @@ button:active{
     background:#815b11;
 }
 
-.test-card{
-    border:1px dashed #536b84;
+.greenbtn{
+    background:#176b3b;
 }
 
-.test-grid{
+.controls,
+.tests{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:8px;
 }
 
-.test-grid button{
+.controls button,
+.tests button{
     margin:0;
-    min-height:54px;
 }
 
-.progress{
-    height:9px;
-    background:#1c2b3f;
-    border-radius:99px;
-    overflow:hidden;
+.section{
+    font-size:17px;
+    font-weight:bold;
+    margin-top:18px;
+}
+
+.log{
+    max-height:260px;
+    overflow:auto;
+    font-size:12px;
+}
+
+.entry{
+    padding:8px 3px;
+    border-bottom:1px solid #20334b;
+}
+
+.note{
+    font-size:11px;
+    color:#8da0b4;
+    line-height:1.4;
     margin-top:8px;
 }
 
-.fill{
-    height:100%;
-    width:50%;
-    background:#31dc77;
-    transition:.3s;
+canvas{
+    width:100%;
+    height:150px;
+    background:#091522;
+    border-radius:12px;
 }
 
-.windlayout{
+.wind{
     display:grid;
-    grid-template-columns:1fr 1.25fr 1fr;
+    grid-template-columns:1fr 1.2fr 1fr;
     align-items:center;
     gap:8px;
 }
 
-.windinfo{
+.center{
     text-align:center;
 }
 
-.windbig{
+.big{
     font-size:27px;
-    font-weight:900;
-}
-
-.muted{
-    color:#8fa4b9;
-    font-size:12px;
+    font-weight:bold;
 }
 
 .compass{
     position:relative;
-    width:min(100%,290px);
+    width:min(100%,280px);
     aspect-ratio:1;
-    margin:auto;
     border:2px solid #2c5576;
     border-radius:50%;
-    background:radial-gradient(circle,#0d2134 0 55%,#091522 56% 100%);
+    margin:auto;
+    background:#091a2a;
 }
 
 .compass:before,
@@ -260,219 +280,96 @@ button:active{
 }
 
 .compass:before{
-    left:50%;
+    width:1px;
     top:8%;
     bottom:8%;
-    width:1px;
+    left:50%;
 }
 
 .compass:after{
-    top:50%;
+    height:1px;
     left:8%;
     right:8%;
-    height:1px;
-}
-
-.dir{
-    position:absolute;
-    inset:0;
-    transform:rotate(var(--wind,215deg));
-    transition:.5s;
+    top:50%;
 }
 
 .arrow{
     position:absolute;
     left:50%;
-    top:12%;
-    height:38%;
+    top:10%;
+    height:40%;
     width:0;
+    transform-origin:bottom;
+    transform:rotate(var(--wind,215deg));
 }
 
 .arrow:after{
     content:"";
     position:absolute;
-    left:-8px;
-    top:-3px;
     border-left:8px solid transparent;
     border-right:8px solid transparent;
-    border-bottom:23px solid #22bfff;
+    border-bottom:24px solid #22bfff;
+    transform:translateX(-50%);
 }
 
-.center{
+.tcenter{
     position:absolute;
     left:50%;
     top:50%;
     transform:translate(-50%,-50%);
-    text-align:center;
     background:#07111fdd;
     border-radius:50%;
-    padding:20px 15px;
-    z-index:3;
+    padding:18px;
+    text-align:center;
+    z-index:2;
 }
 
-.center b{
+.tcenter b{
+    font-size:20px;
+}
+
+.tcenter span{
     display:block;
-    font-size:21px;
-}
-
-.center span{
-    font-size:11px;
     color:#22bfff;
+    font-size:11px;
 }
 
-.cardinal{
+.c{
     position:absolute;
-    font-weight:900;
-    font-size:14px;
+    font-weight:bold;
 }
 
 .n{
-    top:8px;
+    top:7px;
     left:50%;
     transform:translateX(-50%);
-    color:#ff5555;
 }
 
 .e{
-    right:12px;
+    right:9px;
     top:50%;
     transform:translateY(-50%);
 }
 
 .s{
-    bottom:8px;
+    bottom:7px;
     left:50%;
     transform:translateX(-50%);
 }
 
 .w{
-    left:12px;
+    left:9px;
     top:50%;
     transform:translateY(-50%);
 }
 
-.turbine{
-    height:230px;
-    position:relative;
-    display:flex;
-    justify-content:center;
-    align-items:flex-end;
-}
-
-.tower{
-    width:18px;
-    height:135px;
-    background:#d7e1e8;
-    clip-path:polygon(38% 0,62% 0,82% 100%,18% 100%);
-    position:absolute;
-    bottom:12px;
-}
-
-.hub{
-    width:22px;
-    height:22px;
-    border-radius:50%;
-    background:#cdd8df;
-    position:absolute;
-    bottom:142px;
-    left:50%;
-    transform:translateX(-50%);
-    z-index:2;
-}
-
-.blades{
-    position:absolute;
-    bottom:153px;
-    left:50%;
-    width:150px;
-    height:150px;
-    transform:translate(-50%,50%);
-    animation:spin 4s linear infinite;
-}
-
-.blade{
-    position:absolute;
-    left:50%;
-    top:50%;
-    width:7px;
-    height:67px;
-    background:#e8eef2;
-    border-radius:6px;
-    transform-origin:50% 100%;
-    transform:translate(-50%,-100%);
-    clip-path:polygon(45% 0,100% 100%,0 100%);
-}
-
-.b1{transform:translate(-50%,-100%) rotate(0deg)}
-.b2{transform:translate(-50%,-100%) rotate(120deg)}
-.b3{transform:translate(-50%,-100%) rotate(240deg)}
-
-@keyframes spin{
-    to{transform:translate(-50%,50%) rotate(360deg)}
-}
-
-.turbine-dir{
-    position:absolute;
-    bottom:153px;
-    left:50%;
-    width:100px;
-    height:100px;
-    transform:translate(-50%,50%) rotate(var(--turb,125deg));
-    transition:.5s;
-    z-index:4;
-}
-
-.turbine-dir:after{
-    content:"";
-    position:absolute;
-    left:50%;
-    top:2px;
-    border-left:8px solid transparent;
-    border-right:8px solid transparent;
-    border-bottom:28px solid #42e36e;
-    transform:translateX(-50%);
-}
-
-.log{
-    max-height:280px;
-    overflow-y:auto;
-    font-size:12px;
-}
-
-.log-entry{
-    padding:9px 4px;
-    border-bottom:1px solid #20334b;
-}
-
-.log-entry strong{
-    color:#8fa4b9;
-    margin-right:6px;
-}
-
-canvas{
-    width:100%;
-    height:150px;
-    background:#091522;
-    border-radius:12px;
-}
-
-.note{
-    font-size:11px;
-    color:#8fa4b9;
-    line-height:1.45;
-    margin-top:8px;
-}
-
 @media(max-width:650px){
-    .grid{
-        grid-template-columns:1fr 1fr;
-    }
 
-    .windlayout{
+    .wind{
         grid-template-columns:1fr;
     }
 
-    .test-grid{
+    .tests{
         grid-template-columns:1fr 1fr;
     }
 }
@@ -481,643 +378,585 @@ canvas{
 
 <body>
 
-<header>
-    <div>
-        <h1>⚡ ÉOLIENNE</h1>
-        <div class="sub">Surveillance & commande</div>
-    </div>
+<h1>⚡ ÉOLIENNE</h1>
+<div class="sub">
+Surveillance & commande — version test
+</div>
 
-    <div class="online">
-        ● ESP32 — SIMULATION
-    </div>
-</header>
-
+<br>
 
 <!-- FREIN D'URGENCE -->
 
 <button id="emergency" class="emergency">
-    🛑 FREIN D'URGENCE
-    <small>APPUYER POUR ARRÊTER</small>
+🛑 FREIN D'URGENCE
+<small>Appuyer pour déclencher</small>
 </button>
 
+<div id="alert" class="alert"></div>
 
-<div id="alertBox" class="alertbox"></div>
-
+<div id="eco" class="eco">
+🌱 MODE ECO ACTIVÉ — VENT FAIBLE
+</div>
 
 <div id="status" class="status">
-    🟡 SIMULATION EN PAUSE
+🟡 SYSTÈME EN PAUSE
 </div>
 
 
-<!-- MESURES -->
+<!-- CAPTEURS -->
 
 <div class="grid">
 
-    <div class="card metric">
-        <div class="label">🔄 VITESSE ROTOR</div>
-        <div class="value"><span id="rpm">0</span></div>
-        <div class="unit">tr/min</div>
-    </div>
+<div class="card metric">
 
-    <div class="card metric">
-        <div class="label">🌡️ GÉNÉRATEUR</div>
-        <div class="value"><span id="temp">32.0</span> °C</div>
-        <div class="unit">DS18B20</div>
-    </div>
+<div class="head">
+<span class="label">🔄 VITESSE ROTOR</span>
+<i id="rpmDot" class="dot green"></i>
+</div>
 
-    <div class="card metric">
-        <div class="label">🛞 ROULEMENT</div>
-        <div class="value"><span id="bearing">29.0</span> °C</div>
-        <div class="unit">DS18B20</div>
-    </div>
+<div class="value">
+<span id="rpm">0</span>
+</div>
 
-    <div class="card metric">
-        <div class="label">💧 HUMIDITÉ</div>
-        <div class="value"><span id="humidity">55</span> %</div>
-        <div class="unit">SHT31</div>
-    </div>
+<span class="label">tr/min</span>
 
-    <div class="card metric">
-        <div class="label">⚡ TENSION</div>
-        <div class="value"><span id="voltage">12.0</span> V</div>
-    </div>
+</div>
 
-    <div class="card metric">
-        <div class="label">🔌 COURANT</div>
-        <div class="value"><span id="current">0.0</span> A</div>
-    </div>
 
-    <div class="card metric">
-        <div class="label">⚡ PUISSANCE</div>
-        <div class="value"><span id="power">0</span> W</div>
-        <div class="unit">production</div>
-    </div>
+<div class="card metric">
 
-    <div class="card metric">
+<div class="head">
+<span class="label">🌡️ GÉNÉRATEUR</span>
+<i id="tempDot" class="dot green"></i>
+</div>
 
-        <div class="label">🔋 BATTERIE SECOURS</div>
+<div class="value">
+<span id="temp">32.0</span> °C
+</div>
 
-        <div class="value">
-            <span id="battery">12.80</span> V
-        </div>
+</div>
 
-        <div class="progress">
-            <div id="batteryFill" class="fill"></div>
-        </div>
 
-        <div class="label" style="margin-top:12px">
-            🔋 STOCKAGE
-        </div>
+<div class="card metric">
 
-        <div class="value">
-            <span id="secondaryBattery">12.80</span> V
-        </div>
+<div class="head">
+<span class="label">🛞 ROULEMENT</span>
+<i id="bearingDot" class="dot green"></i>
+</div>
 
-        <div class="progress">
-            <div id="secondaryBatteryFill" class="fill"></div>
-        </div>
+<div class="value">
+<span id="bearing">29.0</span> °C
+</div>
 
-    </div>
+</div>
+
+
+<div class="card metric">
+
+<div class="head">
+<span class="label">💧 HUMIDITÉ</span>
+<i id="humidityDot" class="dot green"></i>
+</div>
+
+<div class="value">
+<span id="humidity">55</span> %
+</div>
+
+</div>
+
+
+<div class="card metric">
+
+<div class="head">
+<span class="label">⚡ TENSION</span>
+<i id="voltageDot" class="dot green"></i>
+</div>
+
+<div class="value">
+<span id="voltage">12.0</span> V
+</div>
+
+</div>
+
+
+<div class="card metric">
+
+<div class="head">
+<span class="label">🔌 COURANT</span>
+<i id="currentDot" class="dot green"></i>
+</div>
+
+<div class="value">
+<span id="current">0.0</span> A
+</div>
+
+</div>
+
+
+<div class="card metric">
+
+<div class="head">
+<span class="label">⚡ PUISSANCE</span>
+<i id="powerDot" class="dot green"></i>
+</div>
+
+<div class="value">
+<span id="power">0</span> W
+</div>
+
+</div>
+
+
+<div class="card metric">
+
+<div class="head">
+<span class="label">🔋 BATTERIE SECOURS</span>
+<i id="batteryDot" class="dot green"></i>
+</div>
+
+<div class="value">
+<span id="battery">12.80</span> V
+</div>
+
+<div class="progress">
+<div id="batteryFill" class="fill"></div>
+</div>
+
+<br>
+
+<div class="label">
+🔋 BATTERIE PRINCIPALE / STOCKAGE
+</div>
+
+<div class="value">
+<span id="secondary">12.80</span> V
+</div>
+
+<div class="progress">
+<div id="secondaryFill" class="fill"></div>
+</div>
+
+</div>
 
 </div>
 
 
 <!-- VENT -->
 
-<div class="section-title">
-    🌬️ Vent & orientation
+<div class="section">
+🌬️ Vent & orientation
 </div>
 
 <div class="card">
 
-    <div class="windlayout">
+<div class="wind">
 
-        <div class="windinfo">
+<div class="center">
 
-            <div class="muted">VITESSE</div>
+<div class="label">
+VITESSE VENT
+</div>
 
-            <div class="windbig">
-                <span id="wind">20.0</span> km/h
-            </div>
+<div class="big">
+<span id="wind">20.0</span> km/h
+</div>
 
-            <div class="muted">
-                <span id="windms">5.6</span> m/s
-            </div>
-
-        </div>
-
-
-        <div class="compass">
-
-            <div class="cardinal n">N</div>
-            <div class="cardinal e">E</div>
-            <div class="cardinal s">S</div>
-            <div class="cardinal w">O</div>
-
-            <div class="dir" id="windDir">
-                <div class="arrow"></div>
-            </div>
-
-            <div class="center">
-
-                <b id="windDeg">215°</b>
-
-                <span id="windName">
-                    Sud-Ouest
-                </span>
-
-            </div>
-
-        </div>
-
-
-        <div class="turbine">
-
-            <div
-                class="muted"
-                style="
-                    position:absolute;
-                    top:0;
-                    text-align:center;
-                "
-            >
-                DIRECTION ÉOLIENNE
-
-                <br>
-
-                <strong
-                    style="
-                        font-size:18px;
-                        color:#43e36d;
-                    "
-                >
-                    <span id="turbDeg">125</span>°
-                </strong>
-            </div>
-
-            <div class="tower"></div>
-
-            <div class="hub"></div>
-
-            <div class="blades">
-                <div class="blade b1"></div>
-                <div class="blade b2"></div>
-                <div class="blade b3"></div>
-            </div>
-
-            <div
-                class="turbine-dir"
-                id="turbDir"
-            ></div>
-
-        </div>
-
-    </div>
-
-    <div class="note">
-        🔵 Flèche bleue = direction du vent.
-        🟢 Flèche verte = orientation de l'éolienne.
-    </div>
+<div class="label">
+<span id="windms">5.6</span> m/s
+</div>
 
 </div>
 
 
-<!-- SÉCURITÉ -->
+<div class="compass">
 
-<div class="section-title">
-    🛡️ Sécurité
+<span class="c n">N</span>
+<span class="c e">E</span>
+<span class="c s">S</span>
+<span class="c w">O</span>
+
+<div id="arrow" class="arrow"></div>
+
+<div class="tcenter">
+
+<b id="windDeg">215°</b>
+
+<span id="windName">
+Sud-Ouest
+</span>
+
+</div>
+
+</div>
+
+
+<div class="center">
+
+<div class="label">
+ORIENTATION ÉOLIENNE
+</div>
+
+<div class="big">
+<span id="turbDeg">125</span>°
+</div>
+
+<div class="label">
+🟢 Face au vent
+</div>
+
+</div>
+
+</div>
+
+<div class="note">
+🔵 Direction du vent • 🟢 orientation de l'éolienne
+</div>
+
+</div>
+
+
+<!-- SECURITE -->
+
+<div class="section">
+🛡️ Sécurité
 </div>
 
 <div class="card">
 
-    <div class="row">
-        <span>Frein</span>
-        <strong id="brakeState">🟢 LIBÉRÉ</strong>
-    </div>
+<div class="row">
+<span>Frein</span>
+<b id="brakeState">🟢 LIBÉRÉ</b>
+</div>
 
-    <div class="row">
-        <span>Survitesse</span>
-        <strong id="speedState">🟢 OK</strong>
-    </div>
+<div class="row">
+<span>Survitesse</span>
+<b id="speedState">🟢 OK</b>
+</div>
 
-    <div class="row">
-        <span>Température générateur</span>
-        <strong id="tempState">🟢 OK</strong>
-    </div>
+<div class="row">
+<span>Température générateur</span>
+<b id="tempState">🟢 OK</b>
+</div>
 
-    <div class="row">
-        <span>Température roulement</span>
-        <strong id="bearingState">🟢 OK</strong>
-    </div>
+<div class="row">
+<span>Température roulement</span>
+<b id="bearingState">🟢 OK</b>
+</div>
 
-    <div class="row">
-        <span>Orientation</span>
-        <strong id="orientationState">🟢 FACE AU VENT</strong>
-    </div>
+<div class="row">
+<span>Orientation</span>
+<b id="orientationState">🟢 FACE AU VENT</b>
+</div>
 
-    <div class="row">
-        <span>Arrêt manuel</span>
-        <strong id="manualState">🟢 DÉSACTIVÉ</strong>
-    </div>
+<div class="row">
+<span>Arrêt manuel</span>
+<b id="manualState">🟢 DÉSACTIVÉ</b>
+</div>
 
-    <div class="row">
-        <span>Communication ESP32</span>
-        <strong id="connectionState">🟢 CONNECTÉ</strong>
-    </div>
+<div class="row">
+<span>ESP32</span>
+<b id="connectionState">🟢 CONNECTÉ</b>
+</div>
 
 </div>
 
 
 <!-- COMMANDES -->
 
-<div class="section-title">
-    🕹️ Commandes
+<div class="section">
+🕹️ Commandes
 </div>
 
 <div class="card">
 
-    <div class="controls">
+<div class="controls">
 
-        <button id="start">
-            ▶️ DÉMARRER
-        </button>
+<button id="start">
+▶️ DÉMARRER
+</button>
 
-        <button id="eco" class="eco">
-            🌱 MODE ECO : OFF
-        </button>
+<button id="ecoBtn" class="greenbtn">
+🌱 MODE ECO : OFF
+</button>
 
-    </div>
+</div>
 
-    <button id="notify">
-        🔔 ACTIVER LES NOTIFICATIONS
-    </button>
+<button id="notify">
+🔔 ACTIVER LES NOTIFICATIONS
+</button>
 
-    <button id="manual">
-        🛑 SIMULER ARRÊT MANUEL
-    </button>
+<button id="manual">
+🛑 ARRÊT MANUEL
+</button>
 
-    <button id="reset">
-        🔄 RÉARMER
-    </button>
+<button id="reset">
+🔄 RÉARMER
+</button>
 
 </div>
 
 
-<!-- ÉNERGIE -->
+<!-- ENERGIE -->
 
-<div class="section-title">
-    📊 Énergie
+<div class="section">
+📊 Énergie
 </div>
 
 <div class="card">
 
-    <div class="row">
+<div class="row">
 
-        <span>
-            Énergie produite
-        </span>
+<span>
+Énergie produite
+</span>
 
-        <strong>
-            <span id="energy">0.0000</span> kWh
-        </strong>
+<b>
+<span id="energy">0.0000</span> kWh
+</b>
 
-    </div>
+</div>
 
-    <button id="zeroEnergy">
-        ↺ REMETTRE LE COMPTEUR À ZÉRO
-    </button>
+<button id="zero">
+↺ REMETTRE LE COMPTEUR À ZÉRO
+</button>
 
 </div>
 
 
 <!-- JOURNAL -->
 
-<div class="section-title">
-    📜 Journal des événements
+<div class="section">
+📜 Journal
 </div>
 
 <div class="card">
 
-    <div id="log" class="log">
-        <div class="log-entry">
-            <strong>--:--:--</strong>
-            🟢 Système prêt
-        </div>
-    </div>
+<div id="log" class="log"></div>
 
-    <button id="clearLog">
-        🧹 EFFACER LE JOURNAL
-    </button>
+<button id="clear">
+🧹 EFFACER LE JOURNAL
+</button>
 
 </div>
 
 
 <!-- GRAPHIQUE -->
 
-<div class="section-title">
-    📈 Puissance produite
+<div class="section">
+📈 Puissance
 </div>
 
 <div class="card">
 
-    <canvas id="chart" width="850" height="150"></canvas>
+<canvas id="chart"
+width="850"
+height="150">
+</canvas>
 
 </div>
 
 
-<!-- =====================================================
-     MODE TEST
-===================================================== -->
+<!-- TESTS -->
 
-<div class="section-title">
-    🧪 Simulation des défauts
+<div class="section">
+🧪 Simulation des problèmes
 </div>
 
-<div class="card test-card">
+<div class="card">
 
-    <div
-        class="note"
-        style="
-            margin-top:0;
-            margin-bottom:10px;
-        "
-    >
-        ⚠️ Ces boutons servent uniquement à tester
-        les notifications, les arrêts et le journal.
-        Ils ne commandent aucun équipement réel.
-    </div>
+<div class="note">
 
+Ces boutons servent uniquement à tester
+l'interface. Ils ne commandent aucun
+équipement réel.
 
-    <div class="test-grid">
+</div>
 
-        <button
-            id="testEmergency"
-            class="danger"
-        >
-            🛑 Arrêt d'urgence
-        </button>
+<br>
 
+<div class="tests">
 
-        <button
-            id="testOverspeed"
-            class="danger"
-        >
-            🔴 Simuler survitesse
-        </button>
+<button class="danger" id="tEmergency">
+🛑 Arrêt d'urgence
+</button>
 
+<button class="danger" id="tSpeed">
+🔴 Survitesse
+</button>
 
-        <button
-            id="testGeneratorTemp"
-            class="danger"
-        >
-            🌡️ Surchauffe générateur
-        </button>
+<button class="danger" id="tTemp">
+🌡️ Surchauffe générateur
+</button>
 
+<button class="danger" id="tBearing">
+🛞 Surchauffe roulement
+</button>
 
-        <button
-            id="testBearingTemp"
-            class="danger"
-        >
-            🛞 Surchauffe roulement
-        </button>
+<button class="warning" id="tDelta">
+🔋 DELTA pleine
+</button>
 
+<button class="warning" id="tWind">
+🌬️ Vent trop faible
+</button>
 
-        <button
-            id="testDeltaFull"
-            class="warning"
-        >
-            🔋 DELTA pleine
-        </button>
+<button class="warning" id="tOrientation">
+🧭 Mauvaise orientation
+</button>
 
+<button class="danger" id="tConnection">
+📡 Perte ESP32
+</button>
 
-        <button
-            id="testLowWind"
-            class="warning"
-        >
-            🌬️ Vent trop faible
-        </button>
+<button class="warning" id="tPower">
+⚡ Forte production
+</button>
 
+<button class="warning" id="tBattery">
+🔋 Batterie faible
+</button>
 
-        <button
-            id="testOrientation"
-            class="warning"
-        >
-            🧭 Mauvaise orientation
-        </button>
+<button id="tRestart">
+🟢 Redémarrer
+</button>
 
+<button id="tClear">
+🧹 Effacer journal
+</button>
 
-        <button
-            id="testConnection"
-            class="danger"
-        >
-            📡 Perte ESP32
-        </button>
-
-
-        <button
-            id="testHighPower"
-            class="warning"
-        >
-            ⚡ Forte production
-        </button>
-
-
-        <button
-            id="testLowBattery"
-            class="warning"
-        >
-            🔋 Batterie faible
-        </button>
-
-
-        <button
-            id="testRestart"
-        >
-            🟢 Simuler redémarrage
-        </button>
-
-
-        <button
-            id="clearLogTest"
-        >
-            🧹 Effacer le journal
-        </button>
-
-    </div>
+</div>
 
 </div>
 
 
 <script>
 
-/* =====================================================
-   VARIABLES
-===================================================== */
+let running=false;
 
-let running = false;
-let brake = false;
-let eco = false;
-let manualStop = false;
+let braking=false;
 
-let simulatedConnection = true;
-let deltaFull = false;
+let progressive=false;
 
-let wind = 20;
-let windTarget = 20;
+let brakeReason="";
 
-let windDeg = 215;
-let turbDeg = 125;
+let eco=false;
 
-let rpm = 0;
+let manual=false;
 
-let temp = 32;
-let bearing = 29;
-let humidity = 55;
-
-let voltage = 12;
-let current = 0;
-let power = 0;
-
-let battery = 12.8;
-let secondaryBattery = 12.8;
-
-let energy = 0;
-
-let history = [];
-
-let lastNotification = 0;
+let connected=true;
 
 
-/* =====================================================
-   OUTILS
-===================================================== */
+let rpm=0;
 
-function $(id){
-    return document.getElementById(id);
-}
+let temp=32;
+
+let bearing=29;
+
+let humidity=55;
+
+let wind=20;
+
+let windTarget=20;
+
+let windDeg=215;
+
+let turbDeg=125;
+
+let voltage=12;
+
+let current=0;
+
+let power=0;
+
+let battery=12.8;
+
+let secondary=12.8;
+
+let energy=0;
+
+let history=[];
+
+let lowWindSeen=false;
 
 
-function setText(id,value){
-
-    const element = $(id);
-
-    if(element){
-        element.textContent = value;
-    }
-
-}
+const $=x=>document.getElementById(x);
 
 
-function clamp(value,min,max){
-    return Math.max(min,Math.min(max,value));
-}
+/* JOURNAL */
 
+function log(msg){
 
-/* =====================================================
-   HEURE
-===================================================== */
+    let d=document.createElement("div");
 
-function timeNow(){
+    d.className="entry";
 
-    return new Date().toLocaleTimeString(
-        "fr-FR",
-        {
-            hour:"2-digit",
-            minute:"2-digit",
-            second:"2-digit"
-        }
-    );
+    d.innerHTML=
+        "<b>"+
+        new Date().toLocaleTimeString("fr-FR")+
+        "</b> "+
+        msg;
+
+    $("log").prepend(d);
 
 }
 
 
-/* =====================================================
-   JOURNAL
-===================================================== */
+/* VOYANTS */
 
-function logEvent(message){
+function dot(id,state){
 
-    const log = $("log");
+    $(id).className=
+        "dot "+
+        state;
 
-    const entry =
-        document.createElement("div");
+}
 
-    entry.className =
-        "log-entry";
 
-    entry.innerHTML =
-        "<strong>"+
-        timeNow()+
-        "</strong> "+
-        message;
+/* MODE ECO */
 
-    log.prepend(entry);
+function setEco(value,message){
 
-    while(log.children.length > 100){
+    eco=value;
 
-        log.removeChild(
-            log.lastChild
-        );
+    $("eco").classList.toggle("on",value);
+
+    $("ecoBtn").textContent=
+        "🌱 MODE ECO : "+
+        (value?"ON":"OFF");
+
+    if(message){
+
+        $("status").textContent=message;
 
     }
 
 }
 
 
-/* =====================================================
-   NOTIFICATION
-===================================================== */
+/* ALERTE CRITIQUE */
 
-function notifyUser(title,message){
+function critical(message){
+
+    $("alert").textContent=
+        "🚨 "+message;
+
+    $("alert").classList.add("on");
+
+    document.body.classList.add("critical");
 
     if(
         "Notification" in window &&
-        Notification.permission === "granted" &&
-        Date.now()-lastNotification > 5000
+        Notification.permission==="granted"
     ){
 
-        try{
-
-            new Notification(
-                title,
-                {
-                    body:message
-                }
-            );
-
-            lastNotification =
-                Date.now();
-
-        }catch(e){}
+        new Notification(
+            "🚨 Éolienne",
+            {
+                body:message
+            }
+        );
 
     }
-
-}
-
-
-/* =====================================================
-   ALERTE
-===================================================== */
-
-function alertOn(message){
-
-    setText(
-        "alertBox",
-        "🚨 "+message
-    );
-
-    $("alertBox")
-        .classList
-        .add("on");
-
-    document.body
-        .classList
-        .add("alert");
-
-    notifyUser(
-        "🚨 Éolienne",
-        message
-    );
 
     if(navigator.vibrate){
 
@@ -1132,593 +971,453 @@ function alertOn(message){
 }
 
 
-function alertOff(){
+/* RETIRER ALERTE */
 
-    $("alertBox")
-        .classList
-        .remove("on");
+function clearCritical(){
 
-    document.body
-        .classList
-        .remove("alert");
+    $("alert").classList.remove("on");
+
+    document.body.classList.remove("critical");
 
 }
 
 
-/* =====================================================
-   DIRECTION
-===================================================== */
+/* NOTIFICATIONS */
 
-function windName(deg){
-
-    const names = [
-        "Nord",
-        "Nord-Est",
-        "Est",
-        "Sud-Est",
-        "Sud",
-        "Sud-Ouest",
-        "Ouest",
-        "Nord-Ouest"
-    ];
-
-    return names[
-        Math.round(deg/45)%8
-    ];
-
-}
-
-
-function angleDifference(a,b){
-
-    let d =
-        Math.abs(a-b)%360;
-
-    return d>180
-        ? 360-d
-        : d;
-
-}
-
-
-/* =====================================================
-   NOTIFICATIONS
-===================================================== */
-
-$("notify").onclick =
-async function(){
+$("notify").onclick=async()=>{
 
     if(!("Notification" in window)){
 
         alert(
-            "Les notifications ne sont pas disponibles sur ce navigateur."
+            "Notifications indisponibles."
         );
 
         return;
-    }
-
-    try{
-
-        const permission =
-            await Notification.requestPermission();
-
-        setText(
-            "notify",
-            permission === "granted"
-                ? "🔔 NOTIFICATIONS : ACTIVÉES"
-                : "🔕 NOTIFICATIONS : REFUSÉES"
-        );
-
-    }catch(e){
-
-        alert(
-            "Impossible d'activer les notifications."
-        );
 
     }
+
+    let p=
+        await Notification.requestPermission();
+
+    $("notify").textContent=
+        p==="granted"
+        ?
+        "🔔 NOTIFICATIONS : ACTIVÉES"
+        :
+        "🔕 NOTIFICATIONS : REFUSÉES";
 
 };
 
 
-/* =====================================================
-   DÉMARRER
-===================================================== */
+/* DEMARRAGE */
 
-$("start").onclick =
-function(){
-
-    if(brake){
-
-        alert(
-            "🛑 Frein actif. Réarme le système avant de redémarrer."
-        );
-
-        return;
-    }
-
-    if(manualStop){
-
-        alert(
-            "🛑 Arrêt manuel actif."
-        );
-
-        return;
-    }
-
-    if(!simulatedConnection){
-
-        alert(
-            "📡 ESP32 déconnecté."
-        );
-
-        return;
-    }
-
-    running =
-        !running;
-
-    setText(
-        "start",
-        running
-            ? "⏸️ PAUSE"
-            : "▶️ DÉMARRER"
-    );
-
-    setText(
-        "status",
-        running
-            ? (
-                eco
-                    ? "🌱 MODE ECO ACTIF"
-                    : "🟢 SIMULATION EN COURS"
-              )
-            : "🟡 SIMULATION EN PAUSE"
-    );
-
-    logEvent(
-        running
-            ? "🟢 Éolienne démarrée"
-            : "⏸️ Éolienne mise en pause"
-    );
-
-};
-
-
-/* =====================================================
-   ECO
-===================================================== */
-
-$("eco").onclick =
-function(){
-
-    if(brake){
-
-        alert(
-            "🛑 Impossible pendant le freinage."
-        );
-
-        return;
-    }
-
-    eco =
-        !eco;
-
-    setText(
-        "eco",
-        eco
-            ? "🌱 MODE ECO : ON"
-            : "🌱 MODE ECO : OFF"
-    );
-
-    logEvent(
-        eco
-            ? "🌱 Mode ECO activé"
-            : "🌱 Mode ECO désactivé"
-    );
-
-};
-
-
-/* =====================================================
-   ARRÊT D'URGENCE
-===================================================== */
-
-$("emergency").onclick =
-function(){
+$("start").onclick=()=>{
 
     if(
-        !confirm(
-            "⚠️ Activer le frein d'urgence ?"
-        )
+        braking ||
+        manual ||
+        !connected
     ){
+
+        alert(
+            "Réarme le système avant de démarrer."
+        );
+
         return;
+
     }
 
-    brake =
-        true;
+    running=!running;
 
-    running =
-        false;
+    $("start").textContent=
+        running
+        ?
+        "⏸️ PAUSE"
+        :
+        "▶️ DÉMARRER";
 
-    rpm =
-        0;
+    $("status").textContent=
+        running
+        ?
+        (
+            eco
+            ?
+            "🌱 MODE ECO ACTIF"
+            :
+            "🟢 SIMULATION EN COURS"
+        )
+        :
+        "🟡 SYSTÈME EN PAUSE";
 
-    power =
-        0;
-
-    current =
-        0;
-
-    setText(
-        "start",
-        "▶️ DÉMARRER"
+    log(
+        running
+        ?
+        "🟢 Éolienne démarrée"
+        :
+        "⏸️ Éolienne en pause"
     );
 
-    setText(
-        "status",
-        "🔴 FREIN D'URGENCE ACTIVÉ"
+};
+
+
+/* MODE ECO MANUEL */
+
+$("ecoBtn").onclick=()=>{
+
+    if(braking){
+
+        return;
+
+    }
+
+    setEco(
+        !eco,
+        eco
+        ?
+        "🟢 MODE ECO DÉSACTIVÉ"
+        :
+        "🌱 MODE ECO ACTIVÉ"
     );
 
-    setText(
-        "brakeState",
+    log(
+        eco
+        ?
+        "🌱 Mode ECO activé"
+        :
+        "🌱 Mode ECO désactivé"
+    );
+
+};
+
+
+/* FREIN URGENCE */
+
+$("emergency").onclick=()=>{
+
+    if(
+        confirm(
+            "Activer le frein d'urgence ?"
+        )
+    ){
+
+        brakeStart(
+            "ARRÊT D'URGENCE",
+            false
+        );
+
+    }
+
+};
+
+
+/* ARRÊT MANUEL */
+
+$("manual").onclick=()=>{
+
+    manual=!manual;
+
+    running=false;
+
+    $("manualState").textContent=
+        manual
+        ?
         "🔴 ACTIVÉ"
-    );
+        :
+        "🟢 DÉSACTIVÉ";
 
-    alertOn(
-        "Éolienne arrêtée — frein d'urgence activé"
-    );
+    $("status").textContent=
+        manual
+        ?
+        "🛑 ARRÊT MANUEL"
+        :
+        "🟢 ARRÊT MANUEL DÉSACTIVÉ";
 
-    logEvent(
-        "🔴 Arrêt d'urgence activé"
+    log(
+        manual
+        ?
+        "🛑 Arrêt manuel activé"
+        :
+        "🟢 Arrêt manuel désactivé"
     );
 
 };
 
 
-/* =====================================================
-   ARRÊT MANUEL
-===================================================== */
+/* FREINAGE */
 
-$("manual").onclick =
-function(){
+function brakeStart(
+    reason,
+    slow
+){
 
-    manualStop =
-        !manualStop;
+    running=false;
 
-    if(manualStop){
+    braking=true;
 
-        running =
-            false;
+    progressive=slow;
 
-        setText(
-            "start",
-            "▶️ DÉMARRER"
-        );
+    brakeReason=reason;
 
-        setText(
-            "status",
-            "🛑 ARRÊT MANUEL ACTIVÉ"
-        );
+    $("start").textContent=
+        "▶️ DÉMARRER";
 
-        setText(
-            "manualState",
-            "🔴 ACTIVÉ"
-        );
+    $("brakeState").textContent=
+        slow
+        ?
+        "🟡 FREINAGE PROGRESSIF"
+        :
+        "🔴 FREIN ACTIF";
 
-        logEvent(
-            "🛑 Arrêt manuel activé"
-        );
 
-    }else{
+    /*
+    DELTA pleine :
+    arrêt progressif,
+    sans clignotement rouge.
+    */
 
-        setText(
-            "status",
-            "🟢 ARRÊT MANUEL DÉSACTIVÉ"
-        );
+    if(
+        reason==="DELTA PLEINE"
+    ){
 
-        setText(
-            "manualState",
-            "🟢 DÉSACTIVÉ"
-        );
+        clearCritical();
 
-        logEvent(
-            "🟢 Arrêt manuel désactivé"
+        $("status").textContent=
+            "🟡 ARRÊT PROGRESSIF — DELTA PLEINE";
+
+        log(
+            "🟡 DELTA pleine — "+
+            "arrêt progressif commencé à "+
+            Math.round(rpm)+
+            " tr/min"
         );
 
     }
 
-};
+    else{
+
+        critical(
+            "Éolienne arrêtée — "+
+            reason
+        );
+
+        log(
+            "🔴 Freinage — "+
+            reason+
+            " — rotor "+
+            Math.round(rpm)+
+            " tr/min"
+        );
+
+    }
+
+}
 
 
-/* =====================================================
-   RÉARMEMENT
-===================================================== */
+/* REARMEMENT */
 
-$("reset").onclick =
-function(){
+$("reset").onclick=()=>{
 
     if(
         !confirm(
-            "⚠️ Confirmer le réarmement du système ?"
+            "Confirmer le réarmement ?"
         )
     ){
+
         return;
+
     }
 
-    running =
-        false;
+    running=false;
 
-    brake =
-        false;
+    braking=false;
 
-    eco =
-        false;
+    progressive=false;
 
-    manualStop =
-        false;
+    manual=false;
 
-    deltaFull =
-        false;
+    connected=true;
 
-    simulatedConnection =
-        true;
+    rpm=0;
 
-    rpm =
-        0;
+    power=0;
 
-    power =
-        0;
+    current=0;
 
-    current =
-        0;
+    temp=32;
 
-    temp =
-        32;
+    bearing=29;
 
-    bearing =
-        29;
+    wind=20;
 
-    wind =
-        20;
+    setEco(false);
 
-    windTarget =
-        20;
+    clearCritical();
 
-    setText(
-        "start",
-        "▶️ DÉMARRER"
-    );
 
-    setText(
-        "eco",
-        "🌱 MODE ECO : OFF"
-    );
+    $("start").textContent=
+        "▶️ DÉMARRER";
 
-    setText(
-        "status",
-        "🟢 SYSTÈME RÉARMÉ"
-    );
+    $("brakeState").textContent=
+        "🟢 LIBÉRÉ";
 
-    setText(
-        "brakeState",
-        "🟢 LIBÉRÉ"
-    );
+    $("manualState").textContent=
+        "🟢 DÉSACTIVÉ";
 
-    setText(
-        "manualState",
-        "🟢 DÉSACTIVÉ"
-    );
+    $("connectionState").textContent=
+        "🟢 CONNECTÉ";
 
-    setText(
-        "connectionState",
-        "🟢 CONNECTÉ"
-    );
+    $("speedState").textContent=
+        "🟢 OK";
 
-    alertOff();
+    $("tempState").textContent=
+        "🟢 OK";
 
-    logEvent(
+    $("bearingState").textContent=
+        "🟢 OK";
+
+
+    dot("rpmDot","green");
+
+    dot("tempDot","green");
+
+    dot("bearingDot","green");
+
+    dot("powerDot","green");
+
+    dot("batteryDot","green");
+
+
+    log(
         "🟢 Système réarmé"
     );
 
 };
 
 
-/* =====================================================
-   COMPTEUR
-===================================================== */
+/* COMPTEUR ENERGIE */
 
-$("zeroEnergy").onclick =
-function(){
+$("zero").onclick=()=>{
 
     if(
-        !confirm(
-            "⚠️ Remettre l'énergie produite à zéro ?"
+        confirm(
+            "Remettre le compteur d'énergie à zéro ?"
         )
     ){
-        return;
+
+        energy=0;
+
+        $("energy").textContent=
+            "0.0000";
+
+        log(
+            "↺ Compteur d'énergie remis à zéro"
+        );
+
     }
 
-    energy =
-        0;
+};
 
-    setText(
-        "energy",
-        "0.0000"
+
+/* TEST CRITIQUE */
+
+function testCritical(
+    message,
+    kind
+){
+
+    running=false;
+
+    braking=true;
+
+    progressive=false;
+
+    critical(message);
+
+    log(
+        "🔴 TEST — "+kind
     );
 
-    logEvent(
-        "↺ Compteur d'énergie remis à zéro"
+}
+
+
+/* TEST ARRET */
+
+$("tEmergency").onclick=()=>{
+
+    rpm=Math.max(
+        rpm,
+        300
+    );
+
+    testCritical(
+        "Frein d'urgence activé",
+        "arrêt d'urgence"
     );
 
 };
 
 
-/* =====================================================
-   SIMULATIONS
-===================================================== */
+/* TEST SURVITESSE */
 
+$("tSpeed").onclick=()=>{
 
-/* ARRÊT URGENCE */
+    rpm=720;
 
-$("testEmergency").onclick =
-function(){
-
-    brake =
-        true;
-
-    running =
-        false;
-
-    rpm =
-        0;
-
-    power =
-        0;
-
-    current =
-        0;
-
-    setText(
-        "status",
-        "🔴 ARRÊT D'URGENCE"
+    dot(
+        "rpmDot",
+        "red"
     );
 
-    setText(
-        "brakeState",
-        "🔴 ACTIVÉ"
-    );
+    $("speedState").textContent=
+        "🔴 SURVITESSE";
 
-    alertOn(
-        "Éolienne arrêtée — frein d'urgence activé"
-    );
-
-    logEvent(
-        "🔴 TEST : arrêt d'urgence"
+    testCritical(
+        "Survitesse — 720 tr/min",
+        "survitesse"
     );
 
 };
 
 
-/* SURVITESSE */
+/* TEST TEMPERATURE GENERATEUR */
 
-$("testOverspeed").onclick =
-function(){
+$("tTemp").onclick=()=>{
 
-    rpm =
-        720;
+    temp=102;
 
-    brake =
-        true;
-
-    running =
-        false;
-
-    setText(
-        "rpm",
-        "720"
+    dot(
+        "tempDot",
+        "red"
     );
 
-    setText(
-        "brakeState",
-        "🔴 ACTIVÉ"
-    );
+    $("tempState").textContent=
+        "🔴 ALERTE";
 
-    setText(
-        "speedState",
-        "🔴 SURVITESSE"
-    );
-
-    setText(
-        "status",
-        "🚨 SURVITESSE — ARRÊT AUTOMATIQUE"
-    );
-
-    alertOn(
-        "Éolienne arrêtée — survitesse détectée : 720 tr/min"
-    );
-
-    logEvent(
-        "🔴 TEST : arrêt automatique — survitesse à 720 tr/min"
+    testCritical(
+        "Surchauffe générateur — 102 °C",
+        "surchauffe générateur"
     );
 
 };
 
 
-/* TEMP GÉNÉRATEUR */
+/* TEST ROULEMENT */
 
-$("testGeneratorTemp").onclick =
-function(){
+$("tBearing").onclick=()=>{
 
-    temp =
-        102;
+    bearing=87;
 
-    brake =
-        true;
-
-    running =
-        false;
-
-    setText(
-        "temp",
-        "102.0"
+    dot(
+        "bearingDot",
+        "red"
     );
 
-    setText(
-        "tempState",
-        "🔴 ALERTE"
-    );
+    $("bearingState").textContent=
+        "🔴 ALERTE";
 
-    setText(
-        "status",
-        "🌡️ SURCHAUFFE — ARRÊT AUTOMATIQUE"
-    );
-
-    alertOn(
-        "Éolienne arrêtée — température générateur : 102 °C"
-    );
-
-    logEvent(
-        "🔴 TEST : arrêt automatique — générateur à 102 °C"
-    );
-
-};
-
-
-/* TEMP ROULEMENT */
-
-$("testBearingTemp").onclick =
-function(){
-
-    bearing =
-        87;
-
-    brake =
-        true;
-
-    running =
-        false;
-
-    setText(
-        "bearing",
-        "87.0"
-    );
-
-    setText(
-        "bearingState",
-        "🔴 ALERTE"
-    );
-
-    setText(
-        "status",
-        "🛞 SURCHAUFFE — ARRÊT AUTOMATIQUE"
-    );
-
-    alertOn(
-        "Éolienne arrêtée — température roulement : 87 °C"
-    );
-
-    logEvent(
-        "🔴 TEST : arrêt automatique — roulement à 87 °C"
+    testCritical(
+        "Surchauffe roulement — 87 °C",
+        "surchauffe roulement"
     );
 
 };
@@ -1726,26 +1425,18 @@ function(){
 
 /* DELTA PLEINE */
 
-$("testDeltaFull").onclick =
-function(){
+$("tDelta").onclick=()=>{
 
-    deltaFull =
-        true;
-
-    running =
-        false;
-
-    setText(
-        "status",
-        "🔋 DELTA PLEINE — PRODUCTION ARRÊTÉE"
+    rpm=Math.max(
+        rpm,
+        500
     );
 
-    alertOn(
-        "Production arrêtée — stockage principal à 100 %"
-    );
+    power=400;
 
-    logEvent(
-        "🔋 TEST : DELTA pleine — production arrêtée"
+    brakeStart(
+        "DELTA PLEINE",
+        true
     );
 
 };
@@ -1753,87 +1444,47 @@ function(){
 
 /* VENT FAIBLE */
 
-$("testLowWind").onclick =
-function(){
+$("tWind").onclick=()=>{
 
-    wind =
-        2;
+    wind=2;
 
-    windTarget =
-        2;
+    windTarget=2;
 
-    running =
-        false;
-
-    setText(
-        "wind",
-        "2.0"
+    setEco(
+        true,
+        "🌱 MODE ECO — VENT FAIBLE"
     );
 
-    setText(
-        "windms",
-        "0.6"
+    dot(
+        "powerDot",
+        "yellow"
     );
 
-    setText(
-        "status",
-        "🌬️ VENT INSUFFISANT"
-    );
-
-    alertOn(
-        "Éolienne arrêtée — vent insuffisant : 2 km/h"
-    );
-
-    logEvent(
-        "🟠 TEST : vent trop faible — 2 km/h"
+    log(
+        "🟡 Vent faible — "+
+        "MODE ECO activé, "+
+        "éolienne maintenue en fonctionnement"
     );
 
 };
 
 
-/* ORIENTATION */
+/* MAUVAISE ORIENTATION */
 
-$("testOrientation").onclick =
-function(){
+$("tOrientation").onclick=()=>{
 
-    windDeg =
-        270;
+    windDeg=270;
 
-    turbDeg =
-        150;
+    turbDeg=150;
 
-    const diff =
-        angleDifference(
-            windDeg,
-            turbDeg
-        );
+    $("orientationState").textContent=
+        "🟡 CORRECTION";
 
-    setText(
-        "windDeg",
-        "270°"
-    );
+    $("status").textContent=
+        "🧭 CORRECTION D'ORIENTATION";
 
-    setText(
-        "turbDeg",
-        "150"
-    );
-
-    setText(
-        "orientationState",
-        "🟠 CORRECTION"
-    );
-
-    setText(
-        "status",
-        "🧭 CORRECTION D'ORIENTATION"
-    );
-
-    alertOn(
-        "Correction d'orientation — écart de "+diff+"°"
-    );
-
-    logEvent(
-        "🧭 TEST : mauvaise orientation — écart "+diff+"°"
+    log(
+        "🟡 Mauvaise orientation — correction en cours"
     );
 
 };
@@ -1841,31 +1492,21 @@ function(){
 
 /* PERTE ESP32 */
 
-$("testConnection").onclick =
-function(){
+$("tConnection").onclick=()=>{
 
-    simulatedConnection =
-        false;
+    connected=false;
 
-    running =
-        false;
+    running=false;
 
-    setText(
-        "connectionState",
-        "🔴 DÉCONNECTÉ"
-    );
+    $("connectionState").textContent=
+        "🔴 DÉCONNECTÉ";
 
-    setText(
-        "status",
-        "📡 COMMUNICATION PERDUE"
-    );
-
-    alertOn(
+    critical(
         "Communication avec l'ESP32 perdue"
     );
 
-    logEvent(
-        "🔴 TEST : perte de communication ESP32"
+    log(
+        "🔴 Perte de communication ESP32"
     );
 
 };
@@ -1873,50 +1514,26 @@ function(){
 
 /* FORTE PRODUCTION */
 
-$("testHighPower").onclick =
-function(){
+$("tPower").onclick=()=>{
 
-    running =
-        true;
+    running=true;
 
-    brake =
-        false;
+    power=580;
 
-    power =
-        580;
+    rpm=620;
 
-    rpm =
-        620;
+    current=45;
 
-    current =
-        45;
-
-    setText(
-        "power",
-        "580"
+    dot(
+        "powerDot",
+        "yellow"
     );
 
-    setText(
-        "rpm",
-        "620"
-    );
+    $("status").textContent=
+        "⚡ FORTE PRODUCTION";
 
-    setText(
-        "current",
-        "45.0"
-    );
-
-    setText(
-        "status",
-        "⚡ FORTE PRODUCTION"
-    );
-
-    alertOn(
-        "Forte production détectée : 580 W"
-    );
-
-    logEvent(
-        "⚡ TEST : forte production — 580 W"
+    log(
+        "🟡 Forte production — 580 W"
     );
 
 };
@@ -1924,230 +1541,118 @@ function(){
 
 /* BATTERIE FAIBLE */
 
-$("testLowBattery").onclick =
-function(){
+$("tBattery").onclick=()=>{
 
-    battery =
-        11.75;
+    battery=11.75;
 
-    setText(
-        "battery",
-        "11.75"
+    dot(
+        "batteryDot",
+        "yellow"
     );
 
-    setText(
-        "batteryFill",
-        ""
-    );
+    $("status").textContent=
+        "🔋 BATTERIE SECOURS FAIBLE";
 
-    $("batteryFill")
-        .style
-        .width = "0%";
-
-    setText(
-        "status",
-        "🔋 BATTERIE SECOURS FAIBLE"
-    );
-
-    alertOn(
-        "Batterie de secours faible : 11,75 V"
-    );
-
-    logEvent(
-        "🟠 TEST : batterie de secours faible — 11,75 V"
+    log(
+        "🟡 Batterie secours faible — 11,75 V"
     );
 
 };
 
 
-/* REDÉMARRAGE */
+/* REDEMARRAGE */
 
-$("testRestart").onclick =
-function(){
+$("tRestart").onclick=()=>{
 
-    simulatedConnection =
-        true;
+    $("reset").click();
 
-    brake =
-        false;
-
-    manualStop =
-        false;
-
-    deltaFull =
-        false;
-
-    running =
-        true;
-
-    rpm =
-        150;
-
-    power =
-        100;
-
-    current =
-        8;
-
-    temp =
-        34;
-
-    bearing =
-        31;
-
-    wind =
-        20;
-
-    windTarget =
-        20;
-
-    setText(
-        "connectionState",
-        "🟢 CONNECTÉ"
-    );
-
-    setText(
-        "brakeState",
-        "🟢 LIBÉRÉ"
-    );
-
-    setText(
-        "manualState",
-        "🟢 DÉSACTIVÉ"
-    );
-
-    setText(
-        "status",
-        "🟢 ÉOLIENNE REDÉMARRÉE"
-    );
-
-    alertOff();
-
-    logEvent(
-        "🟢 TEST : éolienne redémarrée"
+    setTimeout(
+        ()=>{
+            $("start").click();
+        },
+        50
     );
 
 };
 
 
-/* EFFACER JOURNAL */
+/* JOURNAL */
 
 function clearLog(){
 
-    $("log").innerHTML =
-        "";
+    $("log").innerHTML="";
 
-    logEvent(
+    log(
         "🧹 Journal effacé"
     );
 
 }
 
-$("clearLog").onclick =
-clearLog;
+$("clear").onclick=clearLog;
 
-$("clearLogTest").onclick =
-clearLog;
+$("tClear").onclick=clearLog;
 
 
-/* =====================================================
-   GRAPHIQUE
-===================================================== */
+/* GRAPHIQUE */
 
-function drawChart(){
+function draw(){
 
-    const canvas =
-        $("chart");
+    let c=$("chart");
 
-    const ctx =
-        canvas.getContext("2d");
-
-    const w =
-        canvas.width;
-
-    const h =
-        canvas.height;
+    let ctx=c.getContext("2d");
 
     ctx.clearRect(
         0,
         0,
-        w,
-        h
+        c.width,
+        c.height
     );
 
-    ctx.strokeStyle =
-        "#20334b";
-
-    ctx.lineWidth =
-        1;
-
-    for(
-        let i=1;
-        i<5;
-        i++
+    if(
+        history.length<2
     ){
 
-        const y =
-            i*h/5;
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            0,
-            y
-        );
-
-        ctx.lineTo(
-            w,
-            y
-        );
-
-        ctx.stroke();
-
-    }
-
-    if(history.length<2){
         return;
+
     }
 
-    const max =
+    let max=
         Math.max(
             600,
             ...history
         );
 
-    ctx.strokeStyle =
-        "#27b7ff";
-
-    ctx.lineWidth =
-        3;
-
     ctx.beginPath();
 
-    history.forEach(
-        function(value,index){
+    ctx.lineWidth=3;
 
-            const x =
-                5 +
-                index*
-                (w-10)/
+    history.forEach(
+        (v,i)=>{
+
+            let x=
+                5+
+                i*
+                (c.width-10)/
                 (history.length-1);
 
-            const y =
-                h-8 -
-                (value/max)*
-                (h-16);
+            let y=
+                c.height-
+                8-
+                v/max*
+                (c.height-16);
 
-            if(index===0){
+            if(i){
 
-                ctx.moveTo(
+                ctx.lineTo(
                     x,
                     y
                 );
 
-            }else{
+            }
 
-                ctx.lineTo(
+            else{
+
+                ctx.moveTo(
                     x,
                     y
                 );
@@ -2162,511 +1667,676 @@ function drawChart(){
 }
 
 
-/* =====================================================
-   SIMULATION PRINCIPALE
-===================================================== */
+/* BOUCLE PRINCIPALE */
 
 function update(){
 
+    /*
+    FREINAGE PROGRESSIF
+
+    La vitesse du rotor continue
+    d'être affichée pendant toute
+    la phase de freinage.
+    */
+
     if(
-        !running ||
-        brake ||
-        !simulatedConnection ||
-        deltaFull ||
-        manualStop
+        braking &&
+        progressive
     ){
 
-        drawChart();
+        rpm=Math.max(
+            0,
+            rpm-
+            (
+                brakeReason===
+                "DELTA PLEINE"
+                ?
+                Math.max(
+                    12,
+                    rpm*.07
+                )
+                :
+                Math.max(
+                    30,
+                    rpm*.15
+                )
+            )
+        );
+
+
+        power=Math.max(
+            0,
+            power-25
+        );
+
+        current=Math.max(
+            0,
+            current-2
+        );
+
+
+        $("rpm").textContent=
+            Math.round(rpm);
+
+        $("power").textContent=
+            Math.round(power);
+
+        $("current").textContent=
+            current.toFixed(1);
+
+
+        /*
+        Affichage de chaque étape
+        du ralentissement.
+        */
+
+        log(
+            "🌀 Freinage — rotor "+
+            Math.round(rpm)+
+            " tr/min"
+        );
+
+
+        if(
+            rpm<=1
+        ){
+
+            rpm=0;
+
+            power=0;
+
+            current=0;
+
+            braking=true;
+
+            progressive=false;
+
+
+            $("brakeState").textContent=
+                "🛑 ARRÊTÉ";
+
+            $("status").textContent=
+                "🟢 ÉOLIENNE ARRÊTÉE — "+
+                brakeReason;
+
+
+            log(
+                "🟢 Rotor arrêté — "+
+                brakeReason
+            );
+
+        }
+
+
+        history.push(power);
+
+        if(
+            history.length>70
+        ){
+
+            history.shift();
+
+        }
+
+        draw();
 
         return;
-    }
-
-
-    /* VENT */
-
-    if(Math.random()<0.07){
-
-        windTarget =
-            8+
-            Math.random()*48;
 
     }
 
-    wind +=
+
+    /*
+    Si l'éolienne n'est pas en marche,
+    aucune simulation.
+    */
+
+    if(
+        !running ||
+        braking ||
+        manual ||
+        !connected
+    ){
+
+        return;
+
+    }
+
+
+    /*
+    Simulation du vent.
+    */
+
+    if(
+        Math.random()<0.08
+    ){
+
+        windTarget=
+            5+
+            Math.random()*45;
+
+    }
+
+
+    wind+=
         (
-            clamp(
-                windTarget+
-                Math.sin(
-                    Date.now()/2500
-                )*2+
-                (Math.random()-0.5)*1.2,
-                5,
-                65
-            )
-            -
+            windTarget-
             wind
-        )*0.08;
+        )*.08;
 
 
-    /* DIRECTION */
-
-    windDeg =
+    windDeg=
         (
             windDeg+
-            (Math.random()-0.5)*3+
+            (
+                Math.random()-
+                .5
+            )*3+
             360
         )%360;
 
 
-    const difference =
-        angleDifference(
-            windDeg,
-            turbDeg
+    /*
+    Orientation automatique
+    vers le vent.
+    */
+
+    let diff=
+        Math.abs(
+            (
+                windDeg-
+                turbDeg+
+                540
+            )%360-
+            180
         );
 
 
-    if(difference>15){
+    if(
+        diff>15
+    ){
 
-        turbDeg =
+        turbDeg=
             (
                 turbDeg+
                 (
                     (
-                        (
-                            windDeg-
-                            turbDeg+
-                            540
-                        )%360
-                    )-180
-                )*0.03+
+                        windDeg-
+                        turbDeg+
+                        540
+                    )%360-
+                    180
+                )*.03+
                 360
             )%360;
 
     }
 
 
-    /* ROTOR */
+    /*
+    VENT FAIBLE
 
-    const targetRPM =
-        clamp(
-            wind*9,
-            25,
-            680
+    IMPORTANT :
+    l'éolienne ne s'arrête pas.
+    Elle passe en MODE ECO.
+    */
+
+    if(
+        wind<7 &&
+        !eco
+    ){
+
+        setEco(
+            true,
+            "🌱 MODE ECO — VENT FAIBLE"
         );
 
-    rpm +=
+        dot(
+            "powerDot",
+            "yellow"
+        );
+
+        log(
+            "🟡 Vent faible — "+
+            "MODE ECO activé"
+        );
+
+        lowWindSeen=true;
+
+    }
+
+
+    /*
+    Retour du vent.
+    */
+
+    if(
+        wind>=10 &&
+        eco &&
+        lowWindSeen
+    ){
+
+        setEco(
+            false,
+            "🟢 VENT NORMAL — MODE ECO DÉSACTIVÉ"
+        );
+
+        dot(
+            "powerDot",
+            "green"
+        );
+
+        log(
+            "🟢 Vent normal — "+
+            "MODE ECO désactivé"
+        );
+
+        lowWindSeen=false;
+
+    }
+
+
+    /*
+    CALCUL ROTOR
+    */
+
+    rpm+=
         (
-            targetRPM-
+            Math.min(
+                680,
+                Math.max(
+                    25,
+                    wind*9
+                )
+            )-
             rpm
-        )*0.12;
+        )*.12;
 
 
-    /* ÉLECTRICITÉ */
+    /*
+    GENERATION ELECTRIQUE
+    */
 
-    voltage =
-        clamp(
+    voltage=
+        Math.min(
+            15,
             12+
-            rpm*0.0085,
-            12,
-            15
+            rpm*.0085
         );
 
 
-    current =
-        clamp(
-            wind*wind*wind*0.0007+
-            (Math.random()-0.5)*0.35,
+    current=
+        Math.max(
             0,
-            40
+            wind*
+            wind*
+            wind*
+            .0007+
+            (
+                Math.random()-
+                .5
+            )*.3
         );
 
 
-    power =
+    power=
         Math.max(
             0,
             voltage*current
         );
 
 
+    /*
+    MODE ECO :
+    puissance limitée.
+    */
+
     if(eco){
 
-        power *=
-            0.75;
+        power*=.75;
 
     }
 
 
-    /* TEMPÉRATURE */
+    /*
+    TEMPERATURES
+    */
 
-    temp +=
+    temp+=
         (
             28+
-            power*0.045+
-            rpm*0.008-
+            power*.045+
+            rpm*.008-
             temp
-        )*0.06;
+        )*.06;
 
 
-    bearing +=
+    bearing+=
         (
             27+
-            power*0.018+
-            rpm*0.004-
+            power*.018+
+            rpm*.004-
             bearing
-        )*0.06;
+        )*.06;
 
 
-    humidity =
-        clamp(
-            humidity+
-            (Math.random()-0.5)*0.35,
+    humidity=
+        Math.max(
             30,
-            85
+            Math.min(
+                85,
+                humidity+
+                (
+                    Math.random()-
+                    .5
+                )*.3
+            )
         );
 
 
-    /* BATTERIES */
+    /*
+    BATTERIES
+    */
 
-    battery =
-        clamp(
-            battery+
-            power/180000-
-            0.00025,
-            11.8,
-            14.4
+    battery=
+        Math.min(
+            14.4,
+            Math.max(
+                11.8,
+                battery+
+                power/180000-
+                .00025
+            )
         );
 
 
-    secondaryBattery =
-        clamp(
-            secondaryBattery+
-            power/260000-
-            0.00018,
-            11.8,
-            14.4
+    secondary=
+        Math.min(
+            14.4,
+            Math.max(
+                11.8,
+                secondary+
+                power/260000-
+                .00018
+            )
         );
 
 
-    /* ÉNERGIE */
+    /*
+    COMPTEUR D'ENERGIE
+    */
 
-    energy +=
-        power/3600000;
+    energy+=
+        power/
+        3600000;
 
 
-    /* =================================================
-       SÉCURITÉS AUTOMATIQUES
-    ================================================= */
+    /*
+    DEFAUTS CRITIQUES
 
-    if(rpm>=650){
+    Ceux-ci font clignoter
+    l'application en rouge.
+    */
 
-        brake =
-            true;
+    if(
+        rpm>=650
+    ){
 
-        running =
-            false;
-
-        setText(
-            "status",
-            "🚨 SURVITESSE — ARRÊT AUTOMATIQUE"
+        dot(
+            "rpmDot",
+            "red"
         );
 
-        alertOn(
-            "Éolienne arrêtée — survitesse : "+
-            Math.round(rpm)+
-            " tr/min"
+        $("speedState").textContent=
+            "🔴 SURVITESSE";
+
+        brakeStart(
+            "SURVITESSE",
+            true
         );
 
-        logEvent(
-            "🔴 Arrêt automatique — survitesse"
-        );
+        return;
 
     }
 
 
-    else if(temp>=100){
+    if(
+        temp>=100
+    ){
 
-        brake =
-            true;
-
-        running =
-            false;
-
-        setText(
-            "status",
-            "🌡️ SURCHAUFFE — ARRÊT AUTOMATIQUE"
+        dot(
+            "tempDot",
+            "red"
         );
 
-        alertOn(
-            "Éolienne arrêtée — générateur : "+
-            temp.toFixed(1)+
-            " °C"
+        $("tempState").textContent=
+            "🔴 ALERTE";
+
+        brakeStart(
+            "SURCHAUFFE GÉNÉRATEUR",
+            true
         );
 
-        logEvent(
-            "🔴 Arrêt automatique — surchauffe générateur"
-        );
+        return;
 
     }
 
 
-    else if(bearing>=85){
+    if(
+        bearing>=85
+    ){
 
-        brake =
-            true;
-
-        running =
-            false;
-
-        setText(
-            "status",
-            "🛞 SURCHAUFFE — ARRÊT AUTOMATIQUE"
+        dot(
+            "bearingDot",
+            "red"
         );
 
-        alertOn(
-            "Éolienne arrêtée — roulement : "+
-            bearing.toFixed(1)+
-            " °C"
+        $("bearingState").textContent=
+            "🔴 ALERTE";
+
+        brakeStart(
+            "SURCHAUFFE ROULEMENT",
+            true
         );
 
-        logEvent(
-            "🔴 Arrêt automatique — surchauffe roulement"
-        );
+        return;
 
     }
 
 
-    /* =================================================
-       AFFICHAGE
-    ================================================= */
+    /*
+    ALERTES JAUNES
 
-    setText(
-        "rpm",
-        Math.round(rpm)
-    );
+    IMPORTANT :
+    aucune animation rouge.
+    */
 
-    setText(
-        "temp",
-        temp.toFixed(1)
-    );
-
-    setText(
-        "bearing",
-        bearing.toFixed(1)
-    );
-
-    setText(
-        "humidity",
-        Math.round(humidity)
-    );
-
-    setText(
-        "voltage",
-        voltage.toFixed(1)
-    );
-
-    setText(
-        "current",
-        current.toFixed(1)
-    );
-
-    setText(
-        "power",
-        Math.round(power)
-    );
-
-    setText(
-        "battery",
-        battery.toFixed(2)
-    );
-
-    setText(
-        "secondaryBattery",
-        secondaryBattery.toFixed(2)
-    );
-
-    setText(
-        "energy",
-        energy.toFixed(4)
-    );
-
-    setText(
-        "wind",
-        wind.toFixed(1)
-    );
-
-    setText(
-        "windms",
-        (wind/3.6).toFixed(1)
-    );
-
-    setText(
-        "windDeg",
-        Math.round(windDeg)+"°"
-    );
-
-    setText(
-        "windName",
-        windName(windDeg)
-    );
-
-    setText(
-        "turbDeg",
-        Math.round(turbDeg)
-    );
-
-
-    /* ORIENTATION */
-
-    $("windDir")
-        .style
-        .setProperty(
-            "--wind",
-            windDeg+"deg"
-        );
-
-
-    $("turbDir")
-        .style
-        .setProperty(
-            "--turb",
-            turbDeg+"deg"
-        );
-
-
-    if(difference<=15){
-
-        setText(
-            "orientationState",
-            "🟢 FACE AU VENT"
-        );
-
-    }
-
-    else if(difference<=30){
-
-        setText(
-            "orientationState",
-            "🟡 CORRECTION"
-        );
-
-    }
-
-    else{
-
-        setText(
-            "orientationState",
-            "🟠 MAUVAISE ORIENTATION"
-        );
-
-    }
-
-
-    /* SÉCURITÉS */
-
-    setText(
-        "brakeState",
-        brake
-            ? "🔴 ACTIVÉ"
-            : "🟢 LIBÉRÉ"
-    );
-
-    setText(
-        "speedState",
+    dot(
+        "rpmDot",
         rpm>=600
-            ? "🟠 SURVEILLANCE"
-            : "🟢 OK"
-    );
-
-    setText(
-        "tempState",
-        temp>=90
-            ? "🔴 ALERTE"
-            : temp>=75
-                ? "🟠 ÉLEVÉE"
-                : "🟢 OK"
-    );
-
-    setText(
-        "bearingState",
-        bearing>=75
-            ? "🔴 ALERTE"
-            : bearing>=60
-                ? "🟠 ÉLEVÉE"
-                : "🟢 OK"
+        ?"yellow"
+        :"green"
     );
 
 
-    setText(
-        "connectionState",
-        simulatedConnection
-            ? "🟢 CONNECTÉ"
-            : "🔴 DÉCONNECTÉ"
+    dot(
+        "tempDot",
+        temp>=75
+        ?"yellow"
+        :"green"
     );
 
 
-    /* BARRES */
+    dot(
+        "bearingDot",
+        bearing>=60
+        ?"yellow"
+        :"green"
+    );
 
-    $("batteryFill")
-        .style
-        .width =
-        clamp(
+
+    dot(
+        "powerDot",
+        power>=500
+        ?"yellow"
+        :"green"
+    );
+
+
+    dot(
+        "batteryDot",
+        battery<=12
+        ?"yellow"
+        :"green"
+    );
+
+
+    /*
+    AFFICHAGE
+    */
+
+    $("rpm").textContent=
+        Math.round(rpm);
+
+    $("temp").textContent=
+        temp.toFixed(1);
+
+    $("bearing").textContent=
+        bearing.toFixed(1);
+
+    $("humidity").textContent=
+        Math.round(humidity);
+
+    $("voltage").textContent=
+        voltage.toFixed(1);
+
+    $("current").textContent=
+        current.toFixed(1);
+
+    $("power").textContent=
+        Math.round(power);
+
+    $("battery").textContent=
+        battery.toFixed(2);
+
+    $("secondary").textContent=
+        secondary.toFixed(2);
+
+    $("energy").textContent=
+        energy.toFixed(4);
+
+
+    $("wind").textContent=
+        wind.toFixed(1);
+
+    $("windms").textContent=
+        (
+            wind/3.6
+        ).toFixed(1);
+
+
+    $("windDeg").textContent=
+        Math.round(
+            windDeg
+        )+
+        "°";
+
+
+    $("turbDeg").textContent=
+        Math.round(
+            turbDeg
+        );
+
+
+    /*
+    ETAT ORIENTATION
+    */
+
+    $("orientationState").textContent=
+        diff<=15
+        ?
+        "🟢 FACE AU VENT"
+        :
+        diff<=30
+        ?
+        "🟡 CORRECTION"
+        :
+        "🟠 MAUVAISE ORIENTATION";
+
+
+    $("connectionState").textContent=
+        "🟢 CONNECTÉ";
+
+
+    /*
+    BARRES BATTERIES
+    */
+
+    $("batteryFill").style.width=
+        (
             (
                 battery-
                 11.8
             )/
-            (
-                14.4-
-                11.8
-            )*100,
-            0,
+            2.6*
             100
-        )+"%";
+        )+
+        "%";
 
 
-    $("secondaryBatteryFill")
-        .style
-        .width =
-        clamp(
+    $("secondaryFill").style.width=
+        (
             (
-                secondaryBattery-
+                secondary-
                 11.8
             )/
-            (
-                14.4-
-                11.8
-            )*100,
-            0,
+            2.6*
             100
-        )+"%";
+        )+
+        "%";
 
 
-    /* HISTORIQUE */
+    /*
+    BOUSSOLE
+    */
 
-    history.push(
-        power
+    $("arrow").style.setProperty(
+        "--wind",
+        windDeg+
+        "deg"
     );
 
-    if(history.length>70){
+
+    /*
+    COURBE PUISSANCE
+    */
+
+    history.push(power);
+
+    if(
+        history.length>70
+    ){
 
         history.shift();
 
     }
 
-    drawChart();
+    draw();
 
 }
 
 
-/* =====================================================
-   BOUCLE
-===================================================== */
+/*
+DEMARRAGE
+*/
+
+log(
+    "🟢 Système prêt"
+);
 
 setInterval(
     update,
     1000
 );
-
-drawChart();
 
 </script>
 
