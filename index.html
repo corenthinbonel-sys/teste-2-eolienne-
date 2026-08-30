@@ -405,7 +405,7 @@ Supervision & commande — simulation automatique
 </div>
 
 
-<!-- CAPTEURS -->
+<!-- ================= CAPTEURS ================= -->
 
 <div class="grid">
 
@@ -543,7 +543,7 @@ Supervision & commande — simulation automatique
 </div>
 
 
-<!-- VENT -->
+<!-- ================= VENT ================= -->
 
 <div class="section">
 🌬️ Vent & orientation
@@ -613,7 +613,7 @@ ORIENTATION ÉOLIENNE
 </div>
 
 
-<!-- SECURITE -->
+<!-- ================= SECURITE ================= -->
 
 <div class="section">
 🛡️ Sécurité
@@ -659,7 +659,7 @@ ORIENTATION ÉOLIENNE
 </div>
 
 
-<!-- COMMANDES -->
+<!-- ================= COMMANDES ================= -->
 
 <div class="section">
 🕹️ Commandes
@@ -690,7 +690,7 @@ ORIENTATION ÉOLIENNE
 </div>
 
 
-<!-- ENERGIE -->
+<!-- ================= ENERGIE ================= -->
 
 <div class="section">
 📊 Énergie
@@ -717,7 +717,7 @@ ORIENTATION ÉOLIENNE
 </div>
 
 
-<!-- JOURNAL -->
+<!-- ================= JOURNAL ================= -->
 
 <div class="section">
 📜 Journal
@@ -734,7 +734,7 @@ ORIENTATION ÉOLIENNE
 </div>
 
 
-<!-- GRAPHIQUE -->
+<!-- ================= GRAPHIQUE ================= -->
 
 <div class="section">
 📈 Puissance
@@ -750,7 +750,7 @@ height="150">
 </div>
 
 
-<!-- TESTS -->
+<!-- ================= TESTS ================= -->
 
 <div class="section">
 🧪 Simulation des défauts
@@ -827,52 +827,36 @@ Ils ne commandent aucun équipement réel.
 ===================================================== */
 
 let running = true;
-
 let braking = false;
-
 let progressive = false;
-
 let brakeReason = "";
-
 let eco = false;
-
 let manual = false;
-
 let connected = true;
 
 let strongProduction = false;
 
 let rpm = 0;
-
 let temp = 32;
-
 let bearing = 29;
-
 let humidity = 55;
 
 let wind = 20;
-
 let windTarget = 20;
 
 let windDeg = 215;
-
 let turbDeg = 125;
 
 let voltage = 12;
-
 let current = 0;
-
 let power = 0;
 
 let battery = 12.8;
-
 let secondary = 12.8;
 
 let energy = 0;
 
 let history = [];
-
-let lowWindSeen = false;
 
 
 /* =====================================================
@@ -909,8 +893,7 @@ function log(msg){
 function dot(id,state){
 
     $(id).className =
-        "dot " +
-        state;
+        "dot " + state;
 }
 
 
@@ -931,10 +914,8 @@ function setEco(value,message){
         "🌱 MODE ECO : " +
         (
             value
-            ?
-            "ON"
-            :
-            "OFF"
+            ? "ON"
+            : "OFF"
         );
 
     if(message){
@@ -1018,7 +999,6 @@ $("notify").onclick = async () => {
         );
 
         return;
-
     }
 
     const permission =
@@ -1030,7 +1010,6 @@ $("notify").onclick = async () => {
         "🔔 NOTIFICATIONS : ACTIVÉES"
         :
         "🔕 NOTIFICATIONS : REFUSÉES";
-
 };
 
 
@@ -1038,10 +1017,7 @@ $("notify").onclick = async () => {
    FREINAGE AUTOMATIQUE
 ===================================================== */
 
-function brakeStart(
-    reason,
-    slow
-){
+function brakeStart(reason,slow){
 
     running = false;
 
@@ -1061,12 +1037,6 @@ function brakeStart(
         "🔴 FREIN ACTIF";
 
 
-    /*
-    DELTA PLEINE :
-    arrêt progressif sans
-    clignotement rouge.
-    */
-
     if(
         reason === "DELTA PLEINE"
     ){
@@ -1083,14 +1053,7 @@ function brakeStart(
         );
 
     }
-
     else{
-
-        /*
-        TOUS LES DÉFAUTS CRITIQUES
-        déclenchent automatiquement
-        le freinage d'urgence.
-        */
 
         critical(
             "FREIN D'URGENCE AUTOMATIQUE — " +
@@ -1106,7 +1069,6 @@ function brakeStart(
         );
 
     }
-
 }
 
 
@@ -1133,14 +1095,14 @@ $("emergency").onclick = () => {
 
 
 /* =====================================================
-   ARRÊT MANUEL
+   ARRET MANUEL
 ===================================================== */
 
 $("manual").onclick = () => {
 
     manual = !manual;
 
-    running = false;
+    running = !manual;
 
     $("manualState").textContent =
         manual
@@ -1154,7 +1116,7 @@ $("manual").onclick = () => {
         ?
         "🛑 ARRÊT MANUEL"
         :
-        "🟢 ARRÊT MANUEL DÉSACTIVÉ";
+        "🟢 SIMULATION AUTOMATIQUE";
 
     log(
         manual
@@ -1163,7 +1125,6 @@ $("manual").onclick = () => {
         :
         "🟢 Arrêt manuel désactivé"
     );
-
 };
 
 
@@ -1195,7 +1156,6 @@ $("ecoBtn").onclick = () => {
         :
         "🌱 Mode ECO désactivé manuellement"
     );
-
 };
 
 
@@ -1216,39 +1176,28 @@ $("reset").onclick = () => {
     }
 
     running = true;
-
     braking = false;
-
     progressive = false;
-
     manual = false;
-
     connected = true;
-
     strongProduction = false;
 
     rpm = 0;
-
     power = 0;
-
     current = 0;
 
     temp = 32;
-
     bearing = 29;
 
     wind = 20;
-
     windTarget = 20;
 
     setEco(false);
 
     clearCritical();
 
-
     $("status").textContent =
         "🟢 SIMULATION AUTOMATIQUE";
-
 
     $("brakeState").textContent =
         "🟢 LIBÉRÉ";
@@ -1268,6 +1217,8 @@ $("reset").onclick = () => {
     $("bearingState").textContent =
         "🟢 OK";
 
+    $("orientationState").textContent =
+        "🟢 FACE AU VENT";
 
     dot("rpmDot","green");
     dot("tempDot","green");
@@ -1275,11 +1226,9 @@ $("reset").onclick = () => {
     dot("powerDot","green");
     dot("batteryDot","green");
 
-
     log(
         "🟢 Système réarmé — simulation automatique"
     );
-
 };
 
 
@@ -1305,7 +1254,6 @@ $("zero").onclick = () => {
         );
 
     }
-
 };
 
 
@@ -1313,15 +1261,10 @@ $("zero").onclick = () => {
    TEST DEFAUT CRITIQUE
 ===================================================== */
 
-function testCritical(
-    message,
-    kind
-){
+function testCritical(message,kind){
 
     running = false;
-
     braking = true;
-
     progressive = false;
 
     strongProduction = false;
@@ -1336,12 +1279,11 @@ function testCritical(
         kind +
         " → frein d'urgence automatique"
     );
-
 }
 
 
 /* =====================================================
-   TEST ARRET URGENCE
+   TEST URGENCE
 ===================================================== */
 
 $("tEmergency").onclick = () => {
@@ -1355,7 +1297,6 @@ $("tEmergency").onclick = () => {
         "FREIN D'URGENCE AUTOMATIQUE",
         "arrêt d'urgence"
     );
-
 };
 
 
@@ -1379,7 +1320,6 @@ $("tSpeed").onclick = () => {
         "SURVITESSE — 720 tr/min",
         "survitesse"
     );
-
 };
 
 
@@ -1403,7 +1343,6 @@ $("tTemp").onclick = () => {
         "SURCHAUFFE GÉNÉRATEUR — 102 °C",
         "surchauffe générateur"
     );
-
 };
 
 
@@ -1427,7 +1366,6 @@ $("tBearing").onclick = () => {
         "SURCHAUFFE ROULEMENT — 87 °C",
         "surchauffe roulement"
     );
-
 };
 
 
@@ -1448,7 +1386,6 @@ $("tDelta").onclick = () => {
         "DELTA PLEINE",
         true
     );
-
 };
 
 
@@ -1459,7 +1396,6 @@ $("tDelta").onclick = () => {
 $("tWind").onclick = () => {
 
     wind = 2;
-
     windTarget = 2;
 
     setEco(
@@ -1475,18 +1411,16 @@ $("tWind").onclick = () => {
     log(
         "🟡 Vent faible — éolienne maintenue en fonctionnement"
     );
-
 };
 
 
 /* =====================================================
-   TEST MAUVAISE ORIENTATION
+   TEST ORIENTATION
 ===================================================== */
 
 $("tOrientation").onclick = () => {
 
     windDeg = 270;
-
     turbDeg = 150;
 
     $("orientationState").textContent =
@@ -1498,7 +1432,6 @@ $("tOrientation").onclick = () => {
     log(
         "🟡 Mauvaise orientation — correction automatique"
     );
-
 };
 
 
@@ -1509,42 +1442,39 @@ $("tOrientation").onclick = () => {
 $("tConnection").onclick = () => {
 
     connected = false;
-
     running = false;
 
     $("connectionState").textContent =
         "🔴 DÉCONNECTÉ";
 
-    /*
-    Perte communication =
-    défaut critique =
-    freinage d'urgence.
-    */
-
     brakeStart(
         "PERTE COMMUNICATION ESP32",
         false
     );
-
 };
 
 
 /* =====================================================
    FORTE PRODUCTION
+=====================================================
+
+   IMPORTANT :
+
+   Aucun ralentissement.
+
+   Le mode est actif à partir de 550 W
+   et se désactive sous 550 W.
 ===================================================== */
 
 $("tPower").onclick = () => {
 
     running = true;
-
     braking = false;
 
     strongProduction = true;
 
     rpm = 620;
-
-    power = 580;
-
+    power = 600;
     current = 45;
 
     clearCritical();
@@ -1555,12 +1485,11 @@ $("tPower").onclick = () => {
     );
 
     $("status").textContent =
-        "🟡 FORTE PRODUCTION — RALENTISSEMENT PROGRESSIF";
+        "🟡 FORTE PRODUCTION";
 
     log(
-        "🟡 Forte production — ralentissement progressif"
+        "🟡 Forte production — aucun ralentissement"
     );
-
 };
 
 
@@ -1583,12 +1512,11 @@ $("tBattery").onclick = () => {
     log(
         "🟡 Batterie secours faible — 11,75 V"
     );
-
 };
 
 
 /* =====================================================
-   REINITIALISATION TEST
+   REINITIALISATION
 ===================================================== */
 
 $("tRestart").onclick = () => {
@@ -1609,7 +1537,6 @@ function clearLog(){
     log(
         "🧹 Journal effacé"
     );
-
 }
 
 $("clear").onclick = clearLog;
@@ -1624,7 +1551,6 @@ $("tClear").onclick = clearLog;
 function draw(){
 
     const c = $("chart");
-
     const ctx = c.getContext("2d");
 
     ctx.clearRect(
@@ -1696,7 +1622,6 @@ function draw(){
     );
 
     ctx.stroke();
-
 }
 
 
@@ -1717,11 +1642,6 @@ function update(){
         progressive
     ){
 
-        /*
-        La vitesse du rotor reste affichée
-        pendant toute la phase de freinage.
-        */
-
         rpm =
             Math.max(
                 0,
@@ -1732,32 +1652,17 @@ function update(){
                 )
             );
 
-
         power =
             Math.max(
                 0,
                 power - 20
             );
 
-
         current =
             Math.max(
                 0,
                 current - 1.5
             );
-
-
-        $("rpm").textContent =
-            Math.round(rpm);
-
-
-        $("power").textContent =
-            Math.round(power);
-
-
-        $("current").textContent =
-            current.toFixed(1);
-
 
         if(
             brakeReason ===
@@ -1769,19 +1674,15 @@ function update(){
 
         }
 
-
         if(
             rpm <= 1
         ){
 
             rpm = 0;
-
             power = 0;
-
             current = 0;
 
             braking = true;
-
             progressive = false;
 
             $("brakeState").textContent =
@@ -1795,47 +1696,27 @@ function update(){
                 "🟢 Rotor arrêté — " +
                 brakeReason
             );
-
         }
-
-
-        history.push(power);
-
-        if(
-            history.length > 70
-        ){
-
-            history.shift();
-
-        }
-
-        draw();
-
-        return;
 
     }
 
 
     /*
     ====================================================
-    FREIN D'URGENCE
+    FREINAGE D'URGENCE
     ====================================================
     */
 
-    if(
+    else if(
         braking &&
         !progressive
     ){
 
-        /*
-        Même lorsque le frein d'urgence
-        est actif, le régime reste visible.
-        */
-
         rpm =
             Math.max(
                 0,
-                rpm - Math.max(
+                rpm -
+                Math.max(
                     35,
                     rpm * 0.22
                 )
@@ -1853,550 +1734,498 @@ function update(){
                 current - 5
             );
 
-
-        $("rpm").textContent =
-            Math.round(rpm);
-
-        $("power").textContent =
-            Math.round(power);
-
-        $("current").textContent =
-            current.toFixed(1);
-
-
         if(
             rpm <= 1
         ){
 
             rpm = 0;
-
             power = 0;
-
             current = 0;
 
             $("brakeState").textContent =
                 "🛑 ARRÊTÉ";
-
         }
 
+    }
 
-        history.push(power);
+
+    /*
+    ====================================================
+    FONCTIONNEMENT NORMAL
+    ====================================================
+    */
+
+    else if(
+        running &&
+        !manual &&
+        connected
+    ){
+
+        /*
+        ----------------------------
+        VENT
+        ----------------------------
+        */
 
         if(
-            history.length > 70
+            Math.random() < 0.08
         ){
 
-            history.shift();
+            windTarget =
+                3 +
+                Math.random() * 42;
 
         }
 
-        draw();
-
-        return;
-
-    }
-
-
-    /*
-    ====================================================
-    CONDITIONS DE FONCTIONNEMENT
-    ====================================================
-    */
-
-    if(
-        !running ||
-        manual ||
-        !connected
-    ){
-
-        return;
-
-    }
-
-
-    /*
-    ====================================================
-    SIMULATION DU VENT
-    ====================================================
-    */
-
-    if(
-        Math.random() < 0.08
-    ){
-
-        windTarget =
-            3 +
-            Math.random() * 42;
-
-    }
-
-
-    wind +=
-        (
-            windTarget -
-            wind
-        ) * 0.08;
-
-
-    /*
-    ====================================================
-    DIRECTION DU VENT
-    ====================================================
-    */
-
-    windDeg =
-        (
-            windDeg +
+        wind +=
             (
-                Math.random() - .5
-            ) * 3 +
-            360
-        ) % 360;
+                windTarget -
+                wind
+            ) * 0.08;
 
 
-    /*
-    ====================================================
-    ORIENTATION AUTOMATIQUE
-    ====================================================
-    */
+        /*
+        ----------------------------
+        DIRECTION
+        ----------------------------
+        */
 
-    let diff =
-        Math.abs(
+        windDeg =
             (
-                windDeg -
-                turbDeg +
-                540
-            ) % 360 -
-            180
-        );
-
-
-    if(
-        diff > 15
-    ){
-
-        turbDeg =
-            (
-                turbDeg +
+                windDeg +
                 (
-                    (
-                        windDeg -
-                        turbDeg +
-                        540
-                    ) % 360 -
-                    180
-                ) * .03 +
+                    Math.random() - .5
+                ) * 3 +
                 360
             ) % 360;
 
-    }
-
-
-    /*
-    ====================================================
-    MODE ECO
-
-    < 7 km/h  → ECO
-    >=15 km/h → ECO OFF
-    ====================================================
-    */
-
-    if(
-        wind < 7 &&
-        !eco
-    ){
-
-        setEco(
-            true,
-            "🌱 MODE ECO — VENT FAIBLE"
-        );
-
-        dot(
-            "powerDot",
-            "yellow"
-        );
-
-        log(
-            "🟡 Vent < 7 km/h — MODE ECO activé"
-        );
-
-        lowWindSeen = true;
-
-    }
-
-
-    if(
-        wind >= 15 &&
-        eco
-    ){
-
-        setEco(
-            false,
-            "🟢 VENT >= 15 km/h — MODE ECO DÉSACTIVÉ"
-        );
-
-        dot(
-            "powerDot",
-            "green"
-        );
-
-        log(
-            "🟢 Vent >= 15 km/h — MODE ECO désactivé"
-        );
-
-        lowWindSeen = false;
-
-    }
-
-
-    /*
-    ====================================================
-    CALCUL DU ROTOR
-    ====================================================
-    */
-
-    let targetRPM =
-        Math.min(
-            680,
-            Math.max(
-                25,
-                wind * 9
-            )
-        );
-
-
-    /*
-    ECO :
-    régime légèrement limité.
-    */
-
-    if(eco){
-
-        targetRPM *= .75;
-
-    }
-
-
-    rpm +=
-        (
-            targetRPM -
-            rpm
-        ) * .12;
-
-
-    /*
-    ====================================================
-    GENERATION
-    ====================================================
-    */
-
-    voltage =
-        Math.min(
-            15,
-            12 +
-            rpm * .0085
-        );
-
-
-    current =
-        Math.max(
-            0,
-            wind *
-            wind *
-            wind *
-            .0007 +
-            (
-                Math.random() -
-                .5
-            ) * .3
-        );
-
-
-    power =
-        Math.max(
-            0,
-            voltage *
-            current
-        );
-
-
-    /*
-    ECO :
-    puissance limitée.
-    */
-
-    if(eco){
-
-        power *= .75;
-
-    }
-
-
-    /*
-    ====================================================
-    FORTE PRODUCTION
-
-    >= 500 W :
-    le rotor ralentit progressivement.
-
-    PAS d'arrêt complet.
-    ====================================================
-    */
-
-    if(
-        power >= 500 ||
-        strongProduction
-    ){
-
-        strongProduction = true;
-
-        dot(
-            "powerDot",
-            "yellow"
-        );
-
-        $("status").textContent =
-            "🟡 FORTE PRODUCTION — RALENTISSEMENT";
-
 
         /*
-        Ralentissement progressif.
+        ----------------------------
+        ORIENTATION AUTOMATIQUE
+        ----------------------------
         */
 
-        rpm =
-            Math.max(
-                250,
-                rpm - 10
+        let diff =
+            Math.abs(
+                (
+                    windDeg -
+                    turbDeg +
+                    540
+                ) % 360 -
+                180
             );
 
+        if(
+            diff > 15
+        ){
+
+            turbDeg =
+                (
+                    turbDeg +
+                    (
+                        (
+                            windDeg -
+                            turbDeg +
+                            540
+                        ) % 360 -
+                        180
+                    ) * .03 +
+                    360
+                ) % 360;
+
+        }
+
 
         /*
-        Réduction progressive
-        de la puissance.
+        ----------------------------
+        MODE ECO
+        ----------------------------
+
+        < 7 km/h = ECO
+        >= 15 km/h = ECO OFF
         */
 
-        power *= .90;
+        if(
+            wind < 7 &&
+            !eco
+        ){
 
+            setEco(
+                true,
+                "🌱 MODE ECO — VENT FAIBLE"
+            );
+
+            dot(
+                "powerDot",
+                "yellow"
+            );
+
+            log(
+                "🟡 Vent < 7 km/h — MODE ECO activé"
+            );
+        }
+
+
+        if(
+            wind >= 15 &&
+            eco
+        ){
+
+            setEco(
+                false,
+                "🟢 VENT >= 15 km/h — MODE ECO DÉSACTIVÉ"
+            );
+
+            dot(
+                "powerDot",
+                "green"
+            );
+
+            log(
+                "🟢 Vent >= 15 km/h — MODE ECO désactivé"
+            );
+        }
+
+
+        /*
+        ----------------------------
+        ROTOR
+        ----------------------------
+        */
+
+        let targetRPM =
+            Math.min(
+                680,
+                Math.max(
+                    25,
+                    wind * 9
+                )
+            );
+
+        if(eco){
+
+            targetRPM *= .75;
+
+        }
+
+        rpm +=
+            (
+                targetRPM -
+                rpm
+            ) * .12;
+
+
+        /*
+        ----------------------------
+        GENERATION
+        ----------------------------
+        */
+
+        voltage =
+            Math.min(
+                15,
+                12 +
+                rpm * .0085
+            );
 
         current =
-            power /
             Math.max(
-                voltage,
-                1
-            );
-
-    }
-
-
-    /*
-    ====================================================
-    TEMPERATURES
-    ====================================================
-    */
-
-    temp +=
-        (
-            28 +
-            power * .045 +
-            rpm * .008 -
-            temp
-        ) * .06;
-
-
-    bearing +=
-        (
-            27 +
-            power * .018 +
-            rpm * .004 -
-            bearing
-        ) * .06;
-
-
-    humidity =
-        Math.max(
-            30,
-            Math.min(
-                85,
-                humidity +
+                0,
+                wind *
+                wind *
+                wind *
+                .0007 +
                 (
                     Math.random() -
                     .5
                 ) * .3
-            )
-        );
+            );
 
-
-    /*
-    ====================================================
-    BATTERIES
-    ====================================================
-    */
-
-    battery =
-        Math.min(
-            14.4,
+        power =
             Math.max(
-                11.8,
-                battery +
-                power / 180000 -
-                .00025
-            )
-        );
+                0,
+                voltage *
+                current
+            );
+
+        if(eco){
+
+            power *= .75;
+
+        }
 
 
-    secondary =
-        Math.min(
-            14.4,
+        /*
+        ==================================================
+        FORTE PRODUCTION
+        ==================================================
+
+        AUCUN RALENTISSEMENT.
+
+        >= 550 W : activation
+        < 550 W  : désactivation
+        ==================================================
+        */
+
+        if(
+            power >= 550
+        ){
+
+            if(
+                !strongProduction
+            ){
+
+                log(
+                    "🟡 Forte production activée — " +
+                    Math.round(power) +
+                    " W"
+                );
+
+            }
+
+            strongProduction = true;
+
+            dot(
+                "powerDot",
+                "yellow"
+            );
+
+            $("status").textContent =
+                "🟡 FORTE PRODUCTION";
+
+        }
+
+
+        if(
+            strongProduction &&
+            power < 550
+        ){
+
+            strongProduction = false;
+
+            dot(
+                "powerDot",
+                "green"
+            );
+
+            $("status").textContent =
+                "🟢 PRODUCTION NORMALE";
+
+            log(
+                "🟢 Forte production désactivée — puissance < 550 W"
+            );
+
+        }
+
+
+        /*
+        ----------------------------
+        TEMPERATURES
+        ----------------------------
+        */
+
+        temp +=
+            (
+                28 +
+                power * .045 +
+                rpm * .008 -
+                temp
+            ) * .06;
+
+        bearing +=
+            (
+                27 +
+                power * .018 +
+                rpm * .004 -
+                bearing
+            ) * .06;
+
+
+        /*
+        ----------------------------
+        HUMIDITE
+        ----------------------------
+        */
+
+        humidity =
             Math.max(
-                11.8,
-                secondary +
-                power / 260000 -
-                .00018
-            )
-        );
+                30,
+                Math.min(
+                    85,
+                    humidity +
+                    (
+                        Math.random() -
+                        .5
+                    ) * .3
+                )
+            );
+
+
+        /*
+        ----------------------------
+        BATTERIES
+        ----------------------------
+        */
+
+        battery =
+            Math.min(
+                14.4,
+                Math.max(
+                    11.8,
+                    battery +
+                    power / 180000 -
+                    .00025
+                )
+            );
+
+        secondary =
+            Math.min(
+                14.4,
+                Math.max(
+                    11.8,
+                    secondary +
+                    power / 260000 -
+                    .00018
+                )
+            );
+
+
+        /*
+        ----------------------------
+        ENERGIE
+        ----------------------------
+        */
+
+        energy +=
+            power /
+            3600000;
+
+
+        /*
+        ==================================================
+        DEFAUTS CRITIQUES
+        ==================================================
+        */
+
+        if(
+            rpm >= 650
+        ){
+
+            dot(
+                "rpmDot",
+                "red"
+            );
+
+            $("speedState").textContent =
+                "🔴 SURVITESSE";
+
+            brakeStart(
+                "SURVITESSE",
+                false
+            );
+
+        }
+
+
+        else if(
+            temp >= 100
+        ){
+
+            dot(
+                "tempDot",
+                "red"
+            );
+
+            $("tempState").textContent =
+                "🔴 ALERTE";
+
+            brakeStart(
+                "SURCHAUFFE GÉNÉRATEUR",
+                false
+            );
+
+        }
+
+
+        else if(
+            bearing >= 85
+        ){
+
+            dot(
+                "bearingDot",
+                "red"
+            );
+
+            $("bearingState").textContent =
+                "🔴 ALERTE";
+
+            brakeStart(
+                "SURCHAUFFE ROULEMENT",
+                false
+            );
+
+        }
+
+    }
 
 
     /*
     ====================================================
-    ENERGIE
-    ====================================================
-    */
-
-    energy +=
-        power /
-        3600000;
-
-
-    /*
-    ====================================================
-    DEFAUTS CRITIQUES AUTOMATIQUES
+    VOYANTS JAUNE / VERT
     ====================================================
     */
 
     if(
-        rpm >= 650
+        !braking
     ){
 
         dot(
             "rpmDot",
-            "red"
+            rpm >= 600
+            ?
+            "yellow"
+            :
+            "green"
         );
-
-        $("speedState").textContent =
-            "🔴 SURVITESSE";
-
-
-        brakeStart(
-            "SURVITESSE",
-            false
-        );
-
-        return;
-
-    }
-
-
-    if(
-        temp >= 100
-    ){
 
         dot(
             "tempDot",
-            "red"
+            temp >= 75
+            ?
+            "yellow"
+            :
+            "green"
         );
-
-        $("tempState").textContent =
-            "🔴 ALERTE";
-
-
-        brakeStart(
-            "SURCHAUFFE GÉNÉRATEUR",
-            false
-        );
-
-        return;
-
-    }
-
-
-    if(
-        bearing >= 85
-    ){
 
         dot(
             "bearingDot",
-            "red"
+            bearing >= 60
+            ?
+            "yellow"
+            :
+            "green"
         );
 
-        $("bearingState").textContent =
-            "🔴 ALERTE";
-
-
-        brakeStart(
-            "SURCHAUFFE ROULEMENT",
-            false
+        dot(
+            "powerDot",
+            strongProduction
+            ?
+            "yellow"
+            :
+            "green"
         );
 
-        return;
+        dot(
+            "batteryDot",
+            battery <= 12
+            ?
+            "yellow"
+            :
+            "green"
+        );
 
     }
-
-
-    /*
-    ====================================================
-    ALERTES JAUNES
-    Pas de clignotement.
-    ====================================================
-    */
-
-    dot(
-        "rpmDot",
-        rpm >= 600
-        ?
-        "yellow"
-        :
-        "green"
-    );
-
-
-    dot(
-        "tempDot",
-        temp >= 75
-        ?
-        "yellow"
-        :
-        "green"
-    );
-
-
-    dot(
-        "bearingDot",
-        bearing >= 60
-        ?
-        "yellow"
-        :
-        "green"
-    );
-
-
-    dot(
-        "powerDot",
-        power >= 500
-        ?
-        "yellow"
-        :
-        "green"
-    );
-
-
-    dot(
-        "batteryDot",
-        battery <= 12
-        ?
-        "yellow"
-        :
-        "green"
-    );
 
 
     /*
@@ -2436,6 +2265,12 @@ function update(){
         energy.toFixed(4);
 
 
+    /*
+    ====================================================
+    VENT
+    ====================================================
+    */
+
     $("wind").textContent =
         wind.toFixed(1);
 
@@ -2444,11 +2279,9 @@ function update(){
             wind / 3.6
         ).toFixed(1);
 
-
     $("windDeg").textContent =
         Math.round(windDeg) +
         "°";
-
 
     $("turbDeg").textContent =
         Math.round(turbDeg);
@@ -2460,7 +2293,7 @@ function update(){
     ====================================================
     */
 
-    diff =
+    let orientationDiff =
         Math.abs(
             (
                 windDeg -
@@ -2470,26 +2303,31 @@ function update(){
             180
         );
 
-
     $("orientationState").textContent =
-        diff <= 15
+        orientationDiff <= 15
         ?
         "🟢 FACE AU VENT"
         :
-        diff <= 30
-        ?
-        "🟡 CORRECTION"
-        :
-        "🟡 MAUVAISE ORIENTATION";
-
-
-    $("connectionState").textContent =
-        "🟢 CONNECTÉ";
+        "🟡 CORRECTION";
 
 
     /*
     ====================================================
-    BARRES BATTERIES
+    CONNEXION
+    ====================================================
+    */
+
+    $("connectionState").textContent =
+        connected
+        ?
+        "🟢 CONNECTÉ"
+        :
+        "🔴 DÉCONNECTÉ";
+
+
+    /*
+    ====================================================
+    BATTERIES
     ====================================================
     */
 
@@ -2506,8 +2344,7 @@ function update(){
                     2.6
                 ) * 100
             )
-        ) +
-        "%";
+        ) + "%";
 
 
     $("secondaryFill").style.width =
@@ -2523,8 +2360,7 @@ function update(){
                     2.6
                 ) * 100
             )
-        ) +
-        "%";
+        ) + "%";
 
 
     /*
@@ -2571,12 +2407,6 @@ log(
 log(
     "▶️ Simulation démarrée automatiquement"
 );
-
-
-/*
-La simulation tourne en permanence.
-Aucun bouton DÉMARRER nécessaire.
-*/
 
 setInterval(
     update,
